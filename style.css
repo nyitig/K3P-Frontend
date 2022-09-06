@@ -1,0 +1,56 @@
+/* fonts */
+@font-face {
+  font-family: Merriweather-Bold;
+  src: url(assets/fonts/Merriweather-Bold.ttf);
+}
+@font-face {
+  font-family: Merriweather-Light;
+  src: url(assets/fonts/Merriweather-Light.ttf);
+}
+@font-face {
+  font-family: Merriweather-Regular;
+  src: url(assets/fonts/Merriweather-Regular.ttf);
+}
+:root {
+  --fontMBold: Merriweather-Bold;
+  --fontMLight: Merriweather-Light;
+  --fontMRegular: Merriweather-Regular;
+}
+/*full page style, scrollbar:none */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  text-decoration: none;
+  list-style-type: none;
+  line-height: 1.6;
+  font-size: 1.0rem;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+.hide {
+  display: none;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+}
+.justyCenter {
+  justify-content: center;
+}
+.alignCenter {
+  align-items: center;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+#fullPageSec {
+  width: 60rem;
+  margin: 0 auto;
+}

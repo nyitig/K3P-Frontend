@@ -33,10 +33,10 @@ registerBack.addEventListener("click", ()=> {
   // input name and password to array
   // post body data
 let loginArr={
-  username:'none',
-  password:'none'
+  username:'',
+  password:''
 }
-
+let formData= new FormData()
 const nameInput=document.getElementById('nameInput')
 nameInput.addEventListener("change",()=>{
   loginArr.username=nameInput.value
@@ -51,18 +51,33 @@ passwordInput.addEventListener("keyup",()=>{
 
 const LoginPageLoginButton=document.getElementById('LoginPageLoginButton')
 // request options
-const options = {
-  method: 'POST',
-  body: JSON.stringify(loginArr),
-  headers: {
-      'Content-Type': 'application/json',
 
-  }
-}
 const url='http://127.0.0.1:9999/test/login'
 LoginPageLoginButton.addEventListener("click",()=> {
-  fetch(url, options, {mode: "no-cors"})
+  
+  formData.append("username",nameInput.value)
+  formData.append("password", loginArr.password)
+  console.log("formData: "+formData)
+  let options = {
+    mode: 'no-cors',
+    credentials: 'include',
+    method: 'POST',
+    headers: {
+      //  'Content-Type': 'multipart/form-data',
+      //  "Content-Type": "application/json",
+      'Content-Type':'text/html',
+         'Accept': 'application/json',
+    },
+    body: JSON.stringify(loginArr),
+  }
+  try{
+    console.log(loginArr)
+     fetch(url, options,)
   .then(response => response.json())
   .catch(err=> console.log(err))
   .then(data => console.log(data))
+  }catch(e) {
+    console.log("error: "+e)
+  }
+ 
 })

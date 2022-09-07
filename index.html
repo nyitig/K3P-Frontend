@@ -19,44 +19,53 @@
 
   <section id="fullPageSec" class="column justyCenter alignCenter">
     <div id="fullPageDivCont" class="column justyCenter alignCenter">
-      <header>
+      <header id="header">
         <div id="headerContainer" class="column justyCenter alignCenter">
           <h3 id="headerh3" class="">K3P-Frontend Project Version:0.01</h3>
         </div>
       </header>
       <main id="main" class="column justyCenter alignCenter">
         <!-- Welcome Page -->
-        <div id="firstPDivCont" class="column justyCenter alignCenter">
-          <h1>Welcome to the K3P Project site</h1>
-          <div id="loginInButton" class="">Login</div>
-          <div id="registerButton" class="">Register</div>
-        </div>
+        <section id="firstPageSect" class="">
+          <div id="firstPDivCont" class="column justyCenter alignCenter">
+            <h1>Welcome to the K3P Project site</h1>
+            <div id="loginButton" class="buttons">Login</div>
+            <div id="registerButton" class="buttons">Register</div>
+          </div>
+      </section>
         <!-- Login Page -->
-        <div id="loginPageDivContainer" class="column justyCenter alignCenter">
-          <h2 id="loginPH2" class="">Login Page</h2>
-          <form action="" method="get">
-            <label for="name">Name</label>
-            <input type="text" name="name" id="nameInput" class="" placeholder="Name" autocomplete="off" required="required">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="passwordInput" class="" autocomplete="off" required="required">
-            <input type="submit" value="Login"> 
-          </form>
-          <div id="loginBack" class="loginBack">Back</div>
-          <!-- test result write -->
-          <div id="loginResult" class=""></div>
-        </div>
+        <section id="loginPage" class="hide">
+          <div id="loginPageDivContainer" class="column justyCenter alignCenter">
+            <h2 id="loginPH2" class="">Login Page</h2>
+            <form action="" method="post" class="column justyCenter alignCenter">
+              <label for="name" class="marginTopLogPage">Name</label>
+              <input type="text" name="name" id="nameInput" class="" placeholder="Name" autocomplete="off" required="required">
+              <label for="password" class="marginTopLogPage">Password</label>
+              <input type="password" name="password" id="passwordInput" class="" autocomplete="off" required="required">
+              <div  id="LoginPageLoginButton" class="marginTopLogPage buttons">Login</div>
+            </form>
+            <div id="loginBack" class="buttons">Back</div>
+            <!-- test result write -->
+            <div id="loginResult" class=""></div>
+          </div>
+        </section>
         <!-- Register Page -->
-        <div id="registerPageContainer" class="">
-          <!-- work in progress -->
-        </div>
+        <section id="registerPage" class="hide">
+          <div id="registerPageContainer" class="column alignCenter justyCenter">
+            <!-- work in progress -->
+            <h2 id="registerPH2" class="">Register Page</h2>
+
+            <div id="registerBack" class="buttons">Back</div>
+          </div>
+        </section>
       </main>
       <footer id="footer" class="column justyCenter alignCenter">
         <div id="footerContainer" class="column">
           <h5 id="fontsH5" class=""> This page use Merriweather fonts. 
             Copyright 2016 The Merriweather Project Authors
-            (<a href="https://github.com/EbenSorkin/Merriweather" target="_blank" rel="noopener noreferrer">
-              https://github.com/EbenSorkin/Merriweather
-            </a>), with Reserved Font Name "Merriweather".
+            <a href="https://github.com/EbenSorkin/Merriweather" target="_blank" rel="noopener noreferrer">
+              (https://github.com/EbenSorkin/Merriweather)
+            </a>, with Reserved Font Name "Merriweather".
           </h5>
           <h5 id="codingH5" class="">
             Coders:

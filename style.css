@@ -26,6 +26,7 @@
   list-style-type: none;
   line-height: 1.6;
   font-size: 1.0rem;
+  transition: all 0.3s;
 }
 *::-webkit-scrollbar {
   display: none;
@@ -53,4 +54,67 @@
 #fullPageSec {
   width: 60rem;
   margin: 0 auto;
+}
+.buttons {
+  width: 6rem;
+  margin-top: 2rem;
+  padding: 6px;
+  text-align: center;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  border: 1px solid black;
+  border-radius: 20px;
+}
+.buttons:hover {
+  background-color: white;
+  color: black;
+}
+h2 {
+  font-size: 2.0rem;
+}
+/* header */
+#header {
+  z-index: 1;
+  height: 7rem;
+  width: 90%;
+  padding: 2rem 0;
+  border-bottom: 2px solid black;
+}
+#headerh3 {
+  font-size: 1.9rem;
+}
+/* main */
+#main {
+  padding: 2rem 0;
+}
+input {
+  padding: 1rem;
+}
+/* first page style */
+#firstPDivCont {
+  min-height: 20rem;
+}
+h1 {
+  font-size: 2.6rem;
+  padding: 2rem 0;
+}
+/* login page style */
+.marginTopLogPage {
+  margin-top: 2rem;
+}
+#loginPageDivContainer {
+  min-height: 20rem;
+}
+
+
+/* footer page style */
+#footer {
+  width: 90%;
+  padding: 2rem;
+  border-top: 2px solid black;
+}
+#footer h5 {
+  text-align: center;
 }

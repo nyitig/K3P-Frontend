@@ -55,6 +55,12 @@
   width: 80vw;
   margin: 0 auto;
 }
+#fullPageDivCont, main {
+  width: 80vw;
+}
+main {
+  word-break: break-word;
+}
 .buttons {
   width: 6rem;
   margin-top: 2rem;

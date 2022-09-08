@@ -30,23 +30,24 @@
           <div id="firstPDivCont" class="column justyCenter alignCenter">
             <h1>Welcome to the K3P Project site</h1>
             <div id="loginButton" class="buttons">Login</div>
-            <div id="registerButton" class="buttons">Register</div>
+            <div id="registerButton" class="buttons">Sing up</div>
           </div>
       </section>
         <!-- Login Page -->
         <section id="loginPage" class="hide">
           <div id="loginPageDivContainer" class="column justyCenter alignCenter">
             <h2 id="loginPH2" class="">Login Page</h2>
-            <form action="#" method="post" enctype="multipart/form-data" class="column justyCenter alignCenter">
-              <label for="name" class="marginTopLogPage">Name</label>
-              <input type="text" name="name" id="nameInput" class="" placeholder="Name" autocomplete="off" required="required">
+            <form action="#" method="post" enctype="text/plain" class="column justyCenter alignCenter">
+              <label for="name" class="marginTopLogPage">E-mail address</label>
+              <input type="email" name="name" id="nameInput" class="" value="" placeholder="E-mail address" autocomplete="off" required="required">
               <label for="password" class="marginTopLogPage">Password</label>
-              <input type="password" name="password" id="passwordInput" class="" autocomplete="off" required="required">
+              <input type="password" name="password" id="passwordInput" class="" value="" autocomplete="new-password" required="required">
+              <!-- test result write -->
+              <div id="loginResult" class=""></div>
               <div  id="LoginPageLoginButton" class="marginTopLogPage buttons">Login</div>
             </form>
             <div id="loginBack" class="buttons">Back</div>
-            <!-- test result write -->
-            <div id="loginResult" class=""></div>
+
           </div>
         </section>
         <!-- Register Page -->
@@ -54,8 +55,28 @@
           <div id="registerPageContainer" class="column alignCenter justyCenter">
             <!-- work in progress -->
             <h2 id="registerPH2" class="">Register Page</h2>
-
+            <form action="#" method="post" enctype="text/plain" class="column justyCenter alignCenter">
+              <label for="firstNameReg" class="marginTopLogPage">First Name</label>
+              <input type="text" name="firstNameReg" id="firstNameReg" class="" placeholder="First Name" autocomplete="off" required="required">
+              <label for="lastNameReg" class="marginTopLogPage">Last Name</label>
+              <input type="text" name="lastNameReg" id="lastNameReg" class="" placeholder="Last Name" autocomplete="off" required="required">
+              <label for="emailReg" class="marginTopLogPage">E-mail</label>
+              <input type="email" name="emailReg" id="emailInputReg" class="" placeholder="e-mail" autocomplete="off" required="required">
+              <label for="passwordReg" class="marginTopLogPage">Password</label>
+              <input type="password" name="passwordReg" id="passwordInputReg" class="" value="" autocomplete="new-password" required="required">
+              <label for="passwordReg2" class="marginTopLogPage">Password again</label>
+              <input type="password" name="passwordReg2" id="passwordInputReg2" class="" value="" autocomplete="new-password" required="required">
+ 
+              <!-- test result write -->
+              <div id="RegisterResult" class=""></div>
+              <div  id="regsterPageRegButton" class="marginTopLogPage buttons">Sing up</div>
+            </form>
             <div id="registerBack" class="buttons">Back</div>
+          </div>
+        </section>
+        <section id="dashboard" class="hide">
+          <div id="dashboardContainer" class="column alignCenter justyCenter marginTopLogPage">
+
           </div>
         </section>
       </main>

@@ -7,6 +7,7 @@ const firstPageSect=document.getElementById('firstPageSect')
 const loginPage=document.getElementById('loginPage')
 const registerPage=document.getElementById('registerPage')
 const registerBack=document.getElementById('registerBack')
+const main=document.getElementById('main')
 let isTrue=false
   // TODO create funtion!!!
 // login button
@@ -62,9 +63,9 @@ const dashboardContainer=document.getElementById('dashboardContainer')
 // request options
 // TODO if emailDto && || passworDto empty, email form check
 
-const url='http://127.0.0.1:9933/api/jwt_login'
-LoginPageLoginButton.addEventListener("click",()=> {
 
+LoginPageLoginButton.addEventListener("click",()=> {
+  const url='http://127.0.0.1:9933/api/jwt_login'
 emailcheck(loginArr.emailDto)
   if (isTrue) {
     checkLenght(passwordvalue)
@@ -205,7 +206,7 @@ regsterPageRegButton.addEventListener("click",()=>{
     return
   }
   checktempl=regArr.emailDto
-  emailcheck(checktempl)
+   emailcheck(checktempl)
   if (!isTrue) {
     console.log("nem megfelelő az emailcím formátum")
     return
@@ -217,8 +218,10 @@ regsterPageRegButton.addEventListener("click",()=>{
     return
   }
   // everything is ok!
-
   console.log("Lefutott a check. isTrue: "+isTrue)
+  // kell egy ellenőrzés, h regisztrált-e már
+  regcheck()
+  
 })
 
 
@@ -227,12 +230,79 @@ regsterPageRegButton.addEventListener("click",()=>{
 
 function emailcheck(emailAddress) {
   isTrue=false
-  let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+  let mailformat=/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   if (emailAddress.match(mailformat)) {
-    console.log("Bejön az if ágba")
     isTrue=true
     console.log("istrue: "+isTrue)
   }
+}
+// Reg check
+function regcheck() {
+  console.log("regcheck function start")
+  const urlRegcheck='http://127.0.0.1:9933/api/admin/get_all_user'
+  fetch(urlRegcheck)
+  .then((response)=> response.json())
+  .then((data) => {
+     isTrue=true
+    data.forEach((val,ind) => {
+      console.log("index: "+ind)
+      console.log("dataINdex.email: "+data[ind].emailDto) 
+      // Ha regisztrált, akkor  
+      if(data[ind].emailDto==regArr.emailDto) {
+        isTrue=false
+        console.log("azonos az emailcím")
+        emailInputReg.value="Foglalt emailcím!"
+        emailInputReg.style.color="red"
+        setTimeout(() => {
+          emailInputReg.value=""
+          emailInputReg.style.color="black"
+          return;
+        }, 3500);
+      } 
+      //TODO Ha nem regisztrált, akkor mehet 
+      if (data[ind].emailDto!=regArr.emailDto) {
+      console.log("nem egyezik az emailcím") 
+      }
+    })
+
+  })
+  .then(()=>{
+    console.log("Ez az utolsó then ág")
+    if (isTrue==true) {
+      register()
+    }
+  }
+  )
+}
+
+// register function
+function register() {
+  console.log("Ez a regiszter function")
+  const regUrl='http://127.0.0.1:9933/api/register/register_new_user'
+  let options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(regArr)
+  }
+  try {
+    fetch(regUrl,options)
+    .then(response => response.json())
+    .then(data => {
+      let mainContainerTemp=`
+      <h2 id="dashboardH2" class="">Sikeresen regisztráltál ${data.firstName} ${data.lastName}! </h2>
+      <p id="dashboardEmail" class="">A(z) ${data.email} címre kiküldtük a megerősítő emailt.</p>
+      <p>Kérjük, kattints az emailben található üzetnetre, hogy megerősítsd a regisztrációd!</p>
+      <p>A megerősítést követően már be tudsz jelentkezni az oldalra.</p>
+      <p>Üdvözlettel: a K3P csapata</p>
+      `
+      main.innerHTML=mainContainerTemp
+    })
+  } catch (error) {
+    console.log("valami nem működik! Hiba: "+error)
+  }  
 }
 
 // Password lenght check

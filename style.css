@@ -96,7 +96,7 @@ h2 {
   padding: 2rem 0;
 }
 input {
-  padding: 1rem;
+  padding: 0.5rem;
 }
 /* first page style */
 #firstPDivCont {
@@ -108,7 +108,7 @@ h1 {
 }
 /* login page style */
 .marginTopLogPage {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 #loginPageDivContainer {
   min-height: 20rem;

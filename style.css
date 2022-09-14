@@ -26,7 +26,7 @@
   list-style-type: none;
   line-height: 1.6;
   font-size: 1.0rem;
-  transition: all 0.3s;
+  transition: all 2s;
 }
 *::-webkit-scrollbar {
   display: none;
@@ -45,6 +45,12 @@
 .justyCenter {
   justify-content: center;
 }
+.justySpAr {
+  justify-content: space-around;
+}
+.justySpBW {
+  justify-content: space-between;
+}
 .alignCenter {
   align-items: center;
 }
@@ -56,10 +62,16 @@
   margin: 0 auto;
 }
 #fullPageDivCont, main {
-  width: 80vw;
+  width: 75vw;
 }
 main {
+  z-index: 1;
+  height: 0rem;
   word-break: break-word;
+}
+main.active {
+  padding: 2rem 0;
+  height: 29rem;
 }
 .buttons {
   width: 6rem;
@@ -80,10 +92,22 @@ main {
 h2 {
   font-size: 2.0rem;
 }
+h3 {
+  font-size: 1.8rem;
+}
+h4 {
+  font-size: 1.6rem;
+}
+.warningTextColor {
+  color: red;
+}
+.cursorPointer {
+  cursor: pointer;
+}
 /* header */
 #header {
   z-index: 1;
-  height: 7rem;
+  height: 8rem;
   width: 90%;
   padding: 2rem 0;
   border-bottom: 2px solid black;
@@ -92,10 +116,8 @@ h2 {
   font-size: 1.9rem;
 }
 /* main */
-#main {
-  padding: 2rem 0;
-}
 input {
+  width: 20rem;
   padding: 0.5rem;
 }
 /* first page style */
@@ -117,10 +139,37 @@ h1 {
 
 /* footer page style */
 #footer {
+  z-index: 10;
+  background-color: white;
   width: 90%;
   padding: 2rem;
   border-top: 2px solid black;
 }
-#footer h5 {
+#impressumAndFAQContainer, #impressHeadCont, #impressMainContainer {
+  width: 80vw;
+}
+.closeSVG {
+  width: 2rem;
+}
+
+#impressumSec {
+  height: 0rem;
+  z-index: 10;
+}
+#impressumSec.active {
+  height: 30rem;
+}
+#impressumDivContainer {
+  background-color: white;
+  z-index: 10;
+  height: 0rem;
+}
+#impressumDivContainer.active {
+  height: 30rem;
+}
+.width50{
+  width: 50%;
+}
+.textCenter {
   text-align: center;
 }

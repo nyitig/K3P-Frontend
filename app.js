@@ -8,6 +8,7 @@ const loginPage=document.getElementById('loginPage')
 const registerPage=document.getElementById('registerPage')
 const registerBack=document.getElementById('registerBack')
 const main=document.getElementById('main')
+const inputfields=document.querySelectorAll('input')
 let isTrue=false
   // TODO create funtion!!!
 // login button
@@ -24,12 +25,56 @@ registerButton.addEventListener("click",() => {
 loginBack.addEventListener("click", () => {
   firstPageSect.classList.toggle('hide')
   loginPage.classList.toggle('hide')
+  clearInputFields()
 })
 // registerBack button
 registerBack.addEventListener("click", ()=> {
   firstPageSect.classList.toggle('hide')
   registerPage.classList.toggle('hide')
+  clearInputFields()
 })
+
+// Impressum 
+const impressumAndFAQContainer=document.getElementById('impressumAndFAQContainer')
+const impressumH6=document.getElementById('impressumH6')
+const FAQH6=document.getElementById('FAQH6')
+const impressumSec=document.getElementById('impressumSec')
+const impressumDivContainer=document.getElementById('impressumDivContainer')
+const impressClose=document.getElementById('impressClose')
+// click impressum & FAQ
+
+// see impress
+
+impressumH6.addEventListener('click', ()=> {
+  impressumSec.classList.toggle('hide')
+  impressumAndFAQContainer.classList.remove("row", "active")
+  impressumAndFAQContainer.classList.add("hide")
+  impressumDivContainer.classList.add('active')
+  main.classList.remove("column", "active")
+  setTimeout(() => {
+
+    main.classList.add("hide")
+  }, 2000);
+
+})
+
+// impressClose click
+
+impressClose.addEventListener('click',()=>{
+  main.classList.remove("hide")
+  setTimeout(() => {
+    main.classList.add("active")
+  }, 10);
+
+  setTimeout(() => {
+    impressumDivContainer.classList.remove('active')
+    impressumAndFAQContainer.classList.add("row", "active")
+    impressumAndFAQContainer.classList.remove("hide")
+    impressumSec.classList.toggle('hide')
+
+  }, 2000);
+})
+
 
 // Login Button click
   // input name and password to array
@@ -95,8 +140,7 @@ emailcheck(loginArr.emailDto)
     let resultTemplate=`<h2>`
     console.log(data)
     if (data.error) {      
-      resultTemplate+=`a hiba oka: ${data.error} </h2>`
-      loginResult.innerHTML=resultTemplate
+      inputfields[0].value="Wrong e-mail or password"
     }
     if (!data.error) {
       // if jwtToken==
@@ -123,8 +167,15 @@ emailcheck(loginArr.emailDto)
  
   }  
   if (!isTrue) {
-    let resultTemplate=`<h2>A hiba oka: Rövid a név vagy a jelszó! </h2>`
-    loginResult.innerHTML=resultTemplate
+    inputfields[0].classList.toggle('warningTextColor')
+    let resultTemplate=`The e-mail or password is short!`
+    inputfields[0].value=resultTemplate
+    inputfields[1].value=""
+    setTimeout(() => {
+      inputfields[0].value=""
+      inputfields[0].classList.toggle('warningTextColor')
+    }, 2000);
+
     setTimeout(() => {
       nameInput.focus()
       loginResult.innerHTML=""
@@ -133,13 +184,6 @@ emailcheck(loginArr.emailDto)
 })
 
 // dashboardTemplate
-/*
-let dashboardTemplate=`
-<h2 id="dashboardH2" class="">Üdvözöllek </h2>
-<p id="dashboardEmail" class="">emailcímed: </p>
-<p id="dashboardjwtToken" class="">jwtToken: </p>
-<p id="dashboardRoles" class="">Roles: </p>`
-*/ 
 
 // register Button click
 /*
@@ -192,28 +236,36 @@ pasw2val=passwordInputReg2.value
 // Sing up button click
 
 regsterPageRegButton.addEventListener("click",()=>{
+  let index=2
   // check inputs fields
   checktempl=regArr.firstNameDto.length
   checkLenght(checktempl)
   if (!isTrue) {
+    wrongInput(index)
     console.log("rovid a firstname")
     return
   }
+  index++
   checktempl=regArr.lastNameDto.length
   checkLenght(checktempl)
   if (!isTrue) {
+    wrongInput(index)
     console.log("rovid a lastname")
     return
   }
+  index++
   checktempl=regArr.emailDto
    emailcheck(checktempl)
   if (!isTrue) {
+    wrongInput(index)
     console.log("nem megfelelő az emailcím formátum")
     return
   }
+  index++
   checktempl=regArr.passwordDto
   console.log(checktempl.length+" checklenght")
   if (checktempl.length<3 || checktempl!=pasw2val ) {
+    wrongInput(index)
     console.log("Nem egyezik a password")
     return
   }
@@ -224,6 +276,48 @@ regsterPageRegButton.addEventListener("click",()=>{
   
 })
 
+// wrong functions
+
+function wrongInput(index) {
+  switch (index) {
+    case 2:
+    case 3: 
+      inputfields[index].classList.toggle('warningTextColor')
+      inputfields[index].value="Short name!"
+      setTimeout(() => {
+        inputfields[index].classList.toggle('warningTextColor')
+        inputfields[index].value=""
+        inputfields[index].focus()
+      }, 2000);
+      break;
+
+    case 4:
+      inputfields[index].classList.toggle('warningTextColor')
+      inputfields[index].value="Wrong e-mail!"
+      setTimeout(() => {
+        inputfields[index].classList.toggle('warningTextColor')
+        inputfields[index].value=""
+        inputfields[index].focus()
+      }, 2000);
+      break;
+      case 5:
+        inputfields[index].classList.toggle('warningTextColor')
+        inputfields[index].type='text'
+        inputfields[index].value="Wrong password"
+        inputfields[6].value=""
+        setTimeout(() => {
+          inputfields[index].classList.toggle('warningTextColor')
+          inputfields[index].type='password'
+          inputfields[index].value=""
+          inputfields[index].focus()
+        }, 2000);
+        break;
+    default:
+      break;
+  }
+
+
+}
 
 
 // Email address check 
@@ -251,11 +345,11 @@ function regcheck() {
       if(data[ind].emailDto==regArr.emailDto) {
         isTrue=false
         console.log("azonos az emailcím")
-        emailInputReg.value="Foglalt emailcím!"
-        emailInputReg.style.color="red"
+        emailInputReg.value="The email is taken"
+        emailInputReg.classList.toggle('warningTextColor')
         setTimeout(() => {
           emailInputReg.value=""
-          emailInputReg.style.color="black"
+          emailInputReg.classList.toggle('warningTextColor')
           return;
         }, 3500);
       } 
@@ -317,3 +411,17 @@ function checkLenght(value) {
     return
   }
 }
+
+// back button click => clear all inputfields
+
+function clearInputFields() {
+// all input const is done
+  inputfields.forEach((val,ind)=> {
+    inputfields[ind].value=""
+  })
+
+}
+
+
+// impressum legyen a footer helyén ill ha katt, akkor külön oldalon jelenjen meg.
+// session storage-t átküldeni "új lapra"

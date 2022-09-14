@@ -24,7 +24,7 @@
           <h3 id="headerh3" class="">K3P-Frontend Project Version:0.01</h3>
         </div>
       </header>
-      <main id="main" class="column justyCenter alignCenter">
+      <main id="main" class="column justyCenter alignCenter active">
         <!-- Welcome Page -->
         <section id="firstPageSect" class="">
           <div id="firstPDivCont" class="column justyCenter alignCenter">
@@ -82,23 +82,84 @@
       </main>
       <footer id="footer" class="column justyCenter alignCenter">
         <div id="footerContainer" class="column">
-          <h5 id="fontsH5" class=""> This page use Merriweather fonts. 
-            Copyright 2016 The Merriweather Project Authors
-            <a href="https://github.com/EbenSorkin/Merriweather" target="_blank" rel="noopener noreferrer">
-              (https://github.com/EbenSorkin/Merriweather)
-            </a>, with Reserved Font Name "Merriweather".
-          </h5>
-          <h5 id="codingH5" class="">
-            Coders:
-            <ul>
-              <li>
-                <span id="" class="coders">Backend: Tamas Laczo</span>
-              </li>
-              <li>
-                <span id="" class="coders">Frontend: NyitiG Világa</span>
-              </li>
-            </ul>
-          </h5>
+          <!-- itt csak egy impresszum legyen -->
+          <div id="impressumAndFAQContainer" class="row justySpAr active">
+            <h6 id="impressumH6" class="cursorPointer">Impressum</h6>
+            <h6 id="FAQH6" class="cursorPointer">F.A.Q.</h6>
+          </div>
+          <!-- 
+ -->
+          <section id="impressumSec" class="hide">
+            <div id="impressumDivContainer" class="column alignCenter">
+              <div id="impressHeadCont" class="row justySpBW">
+                <h2 class="">Impressum</h2>
+                <img src="assets/pic/close-circle-outline.svg" alt="" id="impressClose" class="cursorPointer closeSVG">
+              </div>
+              <h3 id="coders" class="">Coders</h3>
+              <div id="impressMainContainer" class="row textCenter">
+               <div id="impressMainLeftContainer" class="width50">
+                  <h4 id="backend" class="">Backend: </h4>
+                  <ul>
+                    <li>
+                      <span id="" class="coders">Tamas Laczo</span>
+                    </li>
+                  </ul>
+                </div>
+                <div id="impressMainRightContainer" class="width50">
+                  <h4 id="frontend" class="">Frontend:</h4>
+                  <ul>
+                    <li>
+                      <span id="" class="coders">NyitiG Világa</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <h6 id="fontsH5" class=""> This page use Merriweather fonts. 
+                Copyright 2016 The Merriweather Project Authors
+                <a href="https://github.com/EbenSorkin/Merriweather" target="_blank" rel="noopener noreferrer">
+                  (https://github.com/EbenSorkin/Merriweather)
+                </a>, with Reserved Font Name "Merriweather".
+              </h6>
+
+            </div>
+          </section>
+          <section id="faqSection" class="hide">
+            <div id="FAQDivContainer" class="column alignCenter">
+              <div id="faqHeaderContainer" class="">
+                <h2 class="">F.A.Q.</h2>
+                <img src="assets/pic/close-circle-outline.svg" alt="" id="faqClose" class="cursorPointer closeSVG">
+              </div>
+              <div id="faqListContainer" class="">
+                <ul>
+                  <li class="" data-question="question">Question</li>
+                  <li class="" data-answe="answer">
+                    <div id="" class="answerDiv">
+
+                    </div>
+                  </li>
+                  <li class="" data-question="question">Question</li>
+                  <li class="" data-answe="answer">
+                    <div id="" class="answerDiv">
+                      
+                    </div>
+                  </li>
+                  <li class="" data-question="question">Question</li>
+                  <li class="" data-answe="answer">
+                    <div id="" class="answerDiv">
+                      
+                    </div>
+                  </li>
+                  <li class="" data-question="question">Question</li>
+                  <li class="" data-answe="answer">
+                    <div id="" class="answerDiv">
+                      
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </section>
         </div>
       </footer>
         

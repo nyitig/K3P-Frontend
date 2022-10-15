@@ -26,7 +26,7 @@
   list-style-type: none;
   line-height: 1.6;
   font-size: 1.0rem;
-  transition: all 2s;
+  transition: all 0.7s;
 }
 *::-webkit-scrollbar {
   display: none;
@@ -61,16 +61,23 @@
   width: 80vw;
   margin: 0 auto;
 }
+#fullPageSec.dashboard {
+  width: 95vw;
+}
 #fullPageDivCont, main {
   width: 75vw;
 }
+#fullPageDivCont.dashboard, main.dashboard, #header.dashboard, #footer.dashboard {
+  width: 100%;
+}
 main {
+  overflow: hidden;
   z-index: 1;
   height: 0rem;
   word-break: break-word;
 }
 main.active {
-  padding: 2rem 0;
+  padding: 0.1rem 0;
   height: 29rem;
 }
 .buttons {
@@ -98,6 +105,10 @@ h3 {
 h4 {
   font-size: 1.6rem;
 }
+h6 {
+  text-align: center;
+  font-size: 0.9rem;
+}
 .warningTextColor {
   color: red;
 }
@@ -109,8 +120,15 @@ h4 {
   z-index: 1;
   height: 8rem;
   width: 90%;
-  padding: 2rem 0;
+  padding: 1rem 0;
   border-bottom: 2px solid black;
+}
+.header {
+  height: 0rem;
+  overflow: hidden;
+}
+.header.active {
+  height: 6rem;
 }
 #headerh3 {
   font-size: 1.9rem;
@@ -145,26 +163,32 @@ h1 {
   padding: 2rem;
   border-top: 2px solid black;
 }
-#impressumAndFAQContainer, #impressHeadCont, #impressMainContainer {
+#footerContainer.dashboard {
+  width: 100%;
+}
+#impressumAndFAQContainer, #impressHeadCont, #impressMainContainer, #FAQDivContainer, #faqHeaderContainer, #faqListContainer {
   width: 80vw;
 }
 .closeSVG {
   width: 2rem;
 }
+.closeSVGOne {
+  width: 0.9rem;
+}
 
-#impressumSec {
+#impressumSec, #faqSection {
   height: 0rem;
   z-index: 10;
 }
-#impressumSec.active {
+#impressumSec.active, #faqSection.active {
   height: 30rem;
 }
-#impressumDivContainer {
+#impressumDivContainer, #FAQDivContainer {
   background-color: white;
   z-index: 10;
   height: 0rem;
 }
-#impressumDivContainer.active {
+#impressumDivContainer.active, #FAQDivContainer.active {
   height: 30rem;
 }
 .width50{
@@ -172,4 +196,219 @@ h1 {
 }
 .textCenter {
   text-align: center;
+}
+.marginLeftSvg, .answerDiv {
+  margin-left: 1rem;
+}
+.answerDiv {
+  height: 0rem;
+  overflow: hidden;
+}
+.answerDiv.active {
+  height: 6rem;
+}
+.arrow {
+  rotate: 0deg;
+}
+.arrow.active {
+  rotate: 90deg;
+}
+
+/* DASHBOARD */
+
+/* Header Menu elements */
+
+.settingsMenu {
+  height: 0rem;
+  overflow: hidden;
+}
+.settingsMenu.active {
+  height: 5.6rem;
+}
+
+#headerDashboard {
+  width: 95vw;
+}
+#menuIconCont {
+  margin: 0 0.8rem;
+}
+#menuListCont {
+  height: 0rem;
+  overflow: hidden;
+  border: 1px solid black;
+  border-radius: 5px 0 5px 5px;
+  width: 0rem;
+}
+#closeMenuListCont {
+  padding: 0.3rem;
+}
+#menuListCont.active {
+  height: 3.4rem;
+  width: 11.5rem;
+}
+.menuListLi {
+  text-align: center;
+  padding: 0.1rem 0.4rem;
+  /* border-bottom: 1px solid black; */
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+}
+.menuListLi:last-child {
+  border-right: none;
+}
+.menuListLi:hover {
+  background-color: black;
+  color: white;
+}
+.buttonsHeader {
+  width: 3.8rem;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  padding: 4px;
+  text-align: center;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  border: 1px solid black;
+  border-radius: 20px;
+}
+.buttonsHeader:hover {
+  background-color: white;
+  color: black;
+}
+
+/* dashboard section */
+#dashboard {
+  height: 100%;
+}
+
+#dashboardContainer {
+  width: 95vw;
+  height: 100%;
+}
+/* GRID!!!! */
+.kdbxFilenameBox {
+  width: 4rem;
+  padding: 0.2rem;
+  border: 1px solid black;
+  text-align: center;
+  font-size: 0.8rem;
+}
+.kdbxFilenameBox:hover {
+  background-color: black;
+  color: white;
+}
+.gridContainer {
+  margin-top: 2px;
+  display: grid;
+  width: 100%;
+  height: 80%;
+  grid-template-columns: 30% 70%;
+  grid-template-rows: 100%;
+}
+#kdbxFileDataboxLeft {
+  padding-left: 20px;
+  overflow: scroll;
+  border: 1px solid black;
+  border-right: none;
+}
+/* Fa megjelenítés elkészítése! */
+.tab {
+  overflow: hidden;
+  opacity: 0;
+  margin-left: 15px;
+  height: auto; 
+  transform-origin: top; 
+  transform: scaleY(0);
+  transform: max-height 3s ease-in-out;
+  max-height: 0px;
+
+}
+.tab.active {
+   transform: scaleY(1); 
+  overflow: scroll;
+  opacity: 1;
+  max-height: 1000px;
+  
+}
+
+.liArrow {
+  width: 20px;
+  height: 20px;
+  rotate: 0deg;
+}
+.liArrow.active {
+  rotate: 90deg;
+}
+#kdbxFileDataboxRight {
+  border: 1px solid black;
+  overflow: scroll;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  border: 1px solid black;
+  border-bottom: 2px solid black;
+}
+.tableTr td{
+
+  height: 0px;
+
+  opacity: 0;
+  overflow: hidden; 
+  line-height: 0px;
+  border: none;
+}
+.tableTr.active  td{
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+  font-size: 0.8rem;
+  opacity: 1;
+  line-height: 15px;
+
+}
+td {
+  text-align: center;
+
+}
+td:last-child {
+border-right: none;
+}
+
+#kdbxFileFooterInfos {
+  width: 100%;
+  height: 12%;
+
+}
+
+
+@media screen and (max-width:400px) {
+  #header {
+    height: 10rem;
+    width: 100%;
+  }
+  .header.active {
+    height: 8rem;
+  }
+  .buttonsHeader {
+    width: 3.5rem;
+    font-size: 0.8rem;
+  }
+  input {
+    width: 17rem;
+    margin-top: 0.3rem;
+    padding: 0.4rem;
+  }
+  .settingsMenu.active {
+    height: 4.5rem;
+  }
+  th {
+    font-size: 0.8rem;
+  }
+ #footer {
+  width: 100%;
+ }
 }

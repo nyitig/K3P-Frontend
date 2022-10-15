@@ -21,16 +21,53 @@
     <div id="fullPageDivCont" class="column justyCenter alignCenter">
       <header id="header">
         <div id="headerContainer" class="column justyCenter alignCenter">
-          <h3 id="headerh3" class="">K3P-Frontend Project Version:0.01</h3>
+          <section id="beginHeader" class="header active">
+            <h3 id="headerh3" class="textCenter">K3P-Frontend Project V:0.01</h3>
+          </section>
+          <section id="dashboardHeader" class=" header">
+            <div id="dashboadrH6Cont" class="">
+              <h6 id="headerh6" class="textCenter">K3P-Frontend Project V:0.01</h6>
+            </div>
+            <div id="headerDashboard" class="row justySpBW alignCenter wrap">
+              <div id="actionsButtonsContainer" class="row">
+                <div id="actionsButtonsLeftContainer" class="row">
+                  <div id="" class="buttonsHeader">Share</div>
+                  <div id="" class="buttonsHeader">Send</div>
+                  <div id="" class="buttonsHeader">Import</div>
+                  <div id="" class="buttonsHeader">Export</div>
+                  <div id="" class="buttonsHeader">Create</div>
+                </div>
+              </div>
+              <div id="menuHeaderContainer" class="column justyCenter alignCenter">
+                <div id="menuIconCont" class="column alignCenter justyCenter cursorPointer">
+                  <img id="settingsSvg" class="closeSVG settingsMenu active" src="assets/pic/settings-outline.svg" alt="Settings">
+                  <div id="menuListCont" class="settingsMenu">
+                    <!-- :hovert megcsinálni -->
+                    <div id="closeMenuListCont" class="column alignCenter justyCenter">
+                      <img src="assets/pic/close-circle-outline.svg" alt="" id="" class="closeSVGOne ">
+                    </div>
+                    
+                    <ul id="menuListUl" class="row">
+                      <li class="menuListLi">Menu1</li>
+                      <li class="menuListLi">Menu2</li>
+                      <li id="logOut" class="menuListLi">Log out</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              </div>
+          </section>
+
         </div>
       </header>
-      <main id="main" class="column justyCenter alignCenter active">
+      <main id="main" class="column justyCenter alignCenter active ">
         <!-- Welcome Page -->
         <section id="firstPageSect" class="">
           <div id="firstPDivCont" class="column justyCenter alignCenter">
-            <h1>Welcome to the K3P Project site</h1>
+            <h1 class="textCenter">Welcome to the K3P Project site</h1>
             <div id="loginButton" class="buttons">Login</div>
             <div id="registerButton" class="buttons">Sing up</div>
+            <div id="teszt" class="buttons">Teszt</div>
           </div>
       </section>
         <!-- Login Page -->
@@ -47,6 +84,7 @@
               <div  id="LoginPageLoginButton" class="marginTopLogPage buttons">Login</div>
             </form>
             <div id="loginBack" class="buttons">Back</div>
+
 
           </div>
         </section>
@@ -75,8 +113,29 @@
           </div>
         </section>
         <section id="dashboard" class="hide">
-          <div id="dashboardContainer" class="column alignCenter justyCenter marginTopLogPage">
+          <div id="dashboardContainer" class="column">
+            <div id="kdbxFilenameContainer" class="row wrap">
+              <div class="kdbxFilenameBox cursorPointer">Empty</div>
+            </div>
+            <div id="kdbxFileDataboxDiv" class="gridContainer">
+              <div id="kdbxFileDataboxLeft" class="">
 
+              </div>
+              <div id="kdbxFileDataboxRight" class="">
+                <table id="tableContainer">
+                  <tbody>
+                  <tr>
+                    <th>Title</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>URL</th>
+                    <th>Notes</th>
+                  </tr>
+                </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="kdbxFileFooterInfos" class=""></div>
           </div>
         </section>
       </main>
@@ -101,7 +160,7 @@
                   <h4 id="backend" class="">Backend: </h4>
                   <ul>
                     <li>
-                      <span id="" class="coders">Tamas Laczo</span>
+                      <h5 id="" class="coders">Tamas Laczo</h5>
                     </li>
                   </ul>
                 </div>
@@ -109,12 +168,12 @@
                   <h4 id="frontend" class="">Frontend:</h4>
                   <ul>
                     <li>
-                      <span id="" class="coders">NyitiG Világa</span>
+                      <h5 id="" class="coders">NyitiG Világa</h5>
                     </li>
                   </ul>
                 </div>
               </div>
-              <h6 id="fontsH5" class=""> This page use Merriweather fonts. 
+              <h6 id="fontsH5" class="marginTopLogPage"> This page use Merriweather fonts. 
                 Copyright 2016 The Merriweather Project Authors
                 <a href="https://github.com/EbenSorkin/Merriweather" target="_blank" rel="noopener noreferrer">
                   (https://github.com/EbenSorkin/Merriweather)
@@ -125,34 +184,46 @@
           </section>
           <section id="faqSection" class="hide">
             <div id="FAQDivContainer" class="column alignCenter">
-              <div id="faqHeaderContainer" class="">
+              <div id="faqHeaderContainer" class="row justySpBW">
                 <h2 class="">F.A.Q.</h2>
                 <img src="assets/pic/close-circle-outline.svg" alt="" id="faqClose" class="cursorPointer closeSVG">
               </div>
-              <div id="faqListContainer" class="">
+              <div id="faqListContainer" class="marginTopLogPage">
                 <ul>
-                  <li class="" data-question="question">Question</li>
-                  <li class="" data-answe="answer">
+                  <li class="row cursorPointer" data-question="question">
+                    <h4> Question</h4>
+                    <img class="arrow closeSVG marginLeftSvg" src="assets/pic/arrow-forward-circle-outline.svg" alt="">
+                   </li>
+                  <li class="hide" data-answer="answer">
                     <div id="" class="answerDiv">
-
+                      <h5>answer</h5>
                     </div>
                   </li>
-                  <li class="" data-question="question">Question</li>
-                  <li class="" data-answe="answer">
+                  <li class="row cursorPointer" data-question="question">
+                    <h4> Question</h4>
+                    <img class="arrow closeSVG marginLeftSvg" src="assets/pic/arrow-forward-circle-outline.svg" alt="">
+                   </li>
+                  <li class="hide" data-answer="answer">
                     <div id="" class="answerDiv">
-                      
+                      <h5>answer</h5>
                     </div>
                   </li>
-                  <li class="" data-question="question">Question</li>
-                  <li class="" data-answe="answer">
+                  <li class="row cursorPointer" data-question="question">
+                    <h4> Question</h4>
+                    <img class="arrow closeSVG marginLeftSvg" src="assets/pic/arrow-forward-circle-outline.svg" alt="">
+                   </li>
+                  <li class="hide" data-answer="answer">
                     <div id="" class="answerDiv">
-                      
+                      <h5>answer</h5>
                     </div>
                   </li>
-                  <li class="" data-question="question">Question</li>
-                  <li class="" data-answe="answer">
+                  <li class="row cursorPointer" data-question="question">
+                    <h4> Question</h4>
+                    <img class="arrow closeSVG marginLeftSvg" src="assets/pic/arrow-forward-circle-outline.svg" alt="">
+                   </li>
+                  <li class="hide" data-answer="answer">
                     <div id="" class="answerDiv">
-                      
+                      <h5>answer</h5>
                     </div>
                   </li>
                 </ul>

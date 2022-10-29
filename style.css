@@ -308,7 +308,7 @@ h1 {
   grid-template-rows: 100%;
 }
 #kdbxFileDataboxLeft {
-  padding-left: 20px;
+  padding-left: 10px;
   overflow: scroll;
   border: 1px solid black;
   border-right: none;
@@ -330,13 +330,15 @@ h1 {
   overflow: scroll;
   opacity: 1;
   max-height: 1000px;
-  
 }
-
+[data-div].active {
+  background-color: lightgrey;
+}
 .liArrow {
   width: 20px;
   height: 20px;
   rotate: 0deg;
+  margin-right: 3px;
 }
 .liArrow.active {
   rotate: 90deg;
@@ -353,22 +355,30 @@ th {
   border: 1px solid black;
   border-bottom: 2px solid black;
 }
-.tableTr td{
-
+.tableTr td, .tableTr td div{
   height: 0px;
-
   opacity: 0;
   overflow: hidden; 
   line-height: 0px;
   border: none;
 }
-.tableTr.active  td{
+.tableTr.active  td {
   border-bottom: 1px solid black;
   border-right: 1px solid black;
   font-size: 0.8rem;
   opacity: 1;
   line-height: 15px;
 
+}
+.tableTr.active td div {
+  height: auto;
+  opacity: 1;
+  line-height: 15px;
+}
+
+.tableTr.active td div span {
+  font-size: 0.8rem;
+  line-height: 15px;
 }
 td {
   text-align: center;

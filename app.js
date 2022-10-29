@@ -632,22 +632,20 @@ let classIDNames=[]
 let classClickObj={}
 let classGroups=[]
 const tableContainer=document.querySelector("#tableContainer tbody")
-
+let dataTargetId=[]
+let dataIndex=[]
 // Kell egyet a klikknek is készíteni
 // TODO session storage-t átküldeni "új lapra"
-/*
-TODO:
-- bejelntkezés után egy dashboad oldal jwtTokennel hitelesítem magam 
-bejárni a JSON file
-- properties
-- megjeleníteni a neveket
-- amelyik felé viszem az egeret, azt megjeleníteni
-*/ 
 
 // próbatömb
 
 /*
-
+t1 =""
+Webshop="D"
+hun="DD"
+e-mail="DR"
+VirualBox="DRRD"
+Postman is tudja
 */ 
 let xarr=[{
     "uuid": "078a2c66-ec61-4cf8-bfd2-e4a469f89ab1",
@@ -2720,7 +2718,7 @@ kdbxObject={"kdbx":{0:[]},}
   function changeBoxName(obj) {
     for (let  i= 0;  i< obj[0].length; ++i) {
       kdbxFilenameBox[i].innerHTML=obj[0][i].name
-    //   ide addj egy click-es eventet, ami hatására az adott rész fog betöltődni.
+    //   ide adj egy click-es eventet, ami hatására az adott rész fog betöltődni.
       kdbxFilenameBox[i].addEventListener("click", ()=>{
         let kdbxFileDataboxLeft=document.getElementById('kdbxFileDataboxLeft')
         kdbxFileDataboxLeft.innerHTML=""
@@ -2738,7 +2736,7 @@ kdbxObject={"kdbx":{0:[]},}
   // Object bejárás
 
     function objectHeadquaders(obj,level,index) {  
-
+// debugger
         let result = Object.entries(obj)
         // console.log(result.length)
         if (result.length>0) {
@@ -2770,7 +2768,11 @@ kdbxObject={"kdbx":{0:[]},}
             indexHead=0
             IDIndex=0
             if (searchObj[level]===undefined) {
+                seeFullTree()
                 addTreeClick()
+                dataIndex=document.querySelectorAll("[data-index]")
+                dataTargetId=document.querySelectorAll("[data-ol]")  
+                writeTarget()             
                 return
             }
               objectHeadquaders(searchObj[level],level,index)            
@@ -2778,13 +2780,70 @@ kdbxObject={"kdbx":{0:[]},}
     }
 })
 
+function writeTarget() {
+    /*
+    Mit is kellene csinálni?
+    1-ről indulunk, hiszen a 0- elem targetID-ja az ""
+    - Olvassa be az adott ol tag data-targetben található value-t
+    - a children (ezek az li-k) lenght-en menjen végig, a (a=index) 0-nak D a többinek pedig +L-eket
+    írja bele az adott li data-targetid-jébe 
+    -nézze meg, h van-e alatta is még:
+    dataTargetId[index].children[a].children[1].children[0]!=undefined akkor
+    - az adott li-nek (a=index) alatta lévő ol data-targetébe is be kell írni ugyanzet
+    dataTargetId[index].children[a].children[1].children[0].children[0].attributes[2].value értékét
+
+    */ 
+    for (let index = 1; index < dataTargetId.length; index++) {
+        let targetValue
+        targetValue=dataTargetId[index].attributes[2].value
+        let liSArray=dataTargetId[index].children
+        for (let a = 0; a < liSArray.length; a++) {
+            if (a==0) {
+                targetValue+="D"
+                liSArray[a].attributes[3].value=targetValue
+            }
+            if (a!=0) {
+                targetValue+="R"
+                liSArray[a].attributes[3].value=targetValue
+            }
+            if (dataTargetId[index].children[a].children[1].children[0]!=undefined) {
+                dataTargetId[index].children[a].children[1].children[0].children[0].attributes[2].value=targetValue
+            }
+            
+        }
+    }
+}
+
+function seeFullTree() {
+// see all groups into the tree
+ const dataIndex=document.querySelectorAll("[data-levelindex]")
+let olGroupObjEntr=Object.entries(olGroupsObj)
+for (let a = 0; a < olGroupObjEntr.length; a++) {
+    let olGroupObjEntrTemp=olGroupObjEntr[a]
+    for (let b = 0; b < olGroupObjEntrTemp[1].length; b++) {
+        let tags=olGroupObjEntrTemp[1][b].length
+        if (tags==undefined) {
+            olGroupObjEntrTemp[1][b].classList.add('active')
+            let idValue=olGroupObjEntrTemp[1][b].attributes[0].value
+            for (let c = 0; c < dataIndex.length; c++) {
+                let arrowValid=dataIndex[c].attributes[2].value
+                if (arrowValid==idValue) {
+                    dataIndex[c].classList.add('active')
+                }
+            }
+        }
+    }
+}
+}
 
 function objectCommander(obj1,level,index) {
+    // debugger
    if (obj1.length>0) {
       textTemp+=`<div id="lev${level}index${index}" class="tab">
-      <ol class="column">`
+      <ol data-ol="lev${level}index${index}" data-level="${level}" data-target="" class="column olS" >`
+      let levelIndex=`lev${level}index${index}`
     for (let i = 0; i < obj1.length; i++) {
-    objectKeySelector(obj1[i],i,level)
+    objectKeySelector(obj1[i],i,level,levelIndex)
    }  
     textTemp+=`</ol></div>`
     liGroupObjActLev.innerHTML+=textTemp
@@ -2845,13 +2904,16 @@ function objectCommander(obj1,level,index) {
    }
 }
 
-function objectKeySelector(obj1,ind,level) {
+function objectKeySelector(obj1,ind,level,levelIndex) {
     for (const i in obj1) {
         if (i==='name') {
-            textTemp+=`<li id="" class="" data-index="0${level}0${ind}">
+            textTemp+=`<li id="" class="" data-index="${ind}" data-targetid="">
             <div id="" class="groups0${level}ind0${indexHead} row alignCenter cursorPointer">
-            <img src="assets/pic/arrow-forward-circle-outline.svg" alt="" class="liArrow">
-            <span id="" class="">${obj1[i]}</span>
+            <img src="assets/pic/arrow-forward-circle-outline.svg" data-imgarrow="groups0${level}ind0${indexHead}" data-levelindex="${levelIndex}" alt="" class="liArrow">
+            <div class="row alignCenter cursorPointer" data-div="groups0${level}ind0${indexHead}">
+            <img src="assets/pic/folder-outline.svg" data-imgarrowfolder="groups0${level}ind0${indexHead}" alt="" class="liArrow">
+            <span id="" class="" ">${obj1[i]}</span>
+            </div>
             </div><span id="groups0${level}ind0${indexHead}" class=""></span></li>`
             let idName=`groups0${level}ind0${indexHead}`
             groupIDNames.push(idName)
@@ -2927,7 +2989,12 @@ function entriesCreat(obj,level,liGroupObjActLev) {
           let propertiesObjTemp=Object.entries(propertiesObj)
           for (let b = 0; b < propertiesObjTemp.length; b++) {
             if (propertiesObjTemp[b][1].key=='Title') {
-                let titleTdtemp=`<td>${propertiesObjTemp[b][1].value}</td>`
+                let titleTdtemp=`<td>
+                <div class="row alignCenter">
+                <img src="assets/pic/key-outline.svg"  alt="" class="liArrow">
+                <span>${propertiesObjTemp[b][1].value}</span>
+                </div>
+                </td>`
                 titleTd=titleTdtemp.replaceAll(/`/g, "")
             }
             if (propertiesObjTemp[b][1].key=='UserName') {
@@ -2946,121 +3013,111 @@ function entriesCreat(obj,level,liGroupObjActLev) {
           tableTextTemp+=titleTd+usernameTd+passwordTd+urlTd+notesTd
     }
     tableTextTemp+="</tr>"
-    // let vacakSzoveg=tableTextTemp.replaceAll(/`/g, "'")
     tableContainer.innerHTML+=tableTextTemp
 }
 let tableOpenClassArr
 let counter=0
+
 function addTreeClick() {
 /*
 Fa megjelnítés elkészítése
-TODO: az entries-eket is láthatóvá kell majd tenni!
 */ 
 for (let a = 1; a < tableContainer.children.length; a++) {
-    tableContainer.children[a].classList.add('tableTr')
-    
+    tableContainer.children[a].classList.add('tableTr')    
 }
+// entries-ek <tr> elérések
 const tableTr=document.querySelectorAll('.tableTr')
-let tabsClass=document.querySelectorAll(".tab")
-tabsClass[0].classList.add('active')
- liClickObj=Object.entries(classClickObj)
- olOpenObj=Object.entries(olGroupsObj)
-//   debugger
-for (let a = 0; a < liClickObj.length; a++) {
-
-    let liClickTemp=liClickObj[a][1]
-    let olOpenTemp=olOpenObj[a+1][1]
-    for (let z = 0; z < liClickTemp.length; z++) {
-
-        if (olOpenTemp[z][0]===undefined) {
-            liClickTemp[z].addEventListener('click', ()=>{
-                /*
-                Már majdnem jó!
-                Jelenleg ha a true ág jónak tűnik, de a false ág csak akkor működik helyesen,
-                amikor még csak először nyitom ki az ágakat.
-                */             
-              debugger
-            let className=liClickTemp[z].classList[0]
-            // 
-            switch (liClickTemp[z].classList.contains('tableHelp')) {
-                case true:
-                    // elveszem az raklikkelt group calssból a tableHelp-et
-                    liClickTemp[z].classList.toggle('tableHelp')
-                    // becsukom az összes hozzá tartozó entries-t
-                     for (let bb = 0; bb < tableTr.length; bb++) {
-                         
-                             tableTr[bb].classList.toggle('active')
-                         
-                    }
-                //    Most kellene megnézni azt, h ez melyik level melyik van nyitva
-                counter=0
-                let ok=false
-                tableOpenClassArr="none"
-                do {
-                    ok=false
-                    let searchOpen=liClickObj[counter][1]
-                    for (let cc = 0; cc < searchOpen.length; cc++) {
-                        if (searchOpen[cc].classList.contains('tableHelp')) {
-                            tableOpenClassArr=searchOpen[cc].classList[0]
-                            ok=true
-                        }
-                   }
-                    counter++
-                } while (ok);
-                for (let aa = 0; aa < tableTr.length; aa++) {
-                    if (tableTr[aa].classList[0]==tableOpenClassArr) {
-                        tableTr[aa].classList.add('active')
-                    }else {
-                        tableTr[aa].classList.remove('active')
-                    }
-                } 
-                break;
-
-                case false:
-                    liClickTemp[z].classList.toggle('tableHelp')
-                    // tableOpenClassArr.push(className)
-                    for (let aa = 0; aa < tableTr.length; aa++) {
-                        if (tableTr[aa].classList[0]==className) {
-                            tableTr[aa].classList.add('active')
-                        }else {
-                            tableTr[aa].classList.remove('active')
-                        }
-                    } 
-                    break;
-            
-                default:
-                    break;
-            }
-            //  Ez a bal oldali menü nyitás-zárás mechanizmusa 
-            debugger
-                liClickTemp[z].childNodes[1].classList.toggle('active')
-                    olOpenTemp[z].classList.toggle('active')
-                    if (!tabsClass[0].classList.contains('active')) {
-                        tabsClass[0].classList.add('active')
-                    }
-                   
-                   
-                   
-                    
-                    /*
-                    Azt kellene vhogy megoldani, h ha becsukom az ezzel előttit, akkor ami nyitva maradt
-                    azt azért megjelenítse
-                    Itt egy teljesen más mechanizmusnak kell lennie. Lehet, h ez az egész
-                    */ 
-                    
-                    // for (let b = 0; b < tableTr.length; b++) {
-                    //     if (tableTr[b].classList[0]==tableOpenClassArr[counter-1]) {
-                    //         tableTr[b].classList.toggle('active')
-                    //     }
-                    //     if (tableTr[b].classList[0]!=tableOpenClassArr[counter-1]) {
-                    //        tableTr[b].classList.remove('active')
-                    //     }
-                    // }
-            })
-            }
-
+// divek elérhetőek=> entries-ek megjelenítéséhez
+const dataDivs=document.querySelectorAll("[data-div]")
+// data-div katt=> toggle tableTr
+// Entries-ek megjelenítése, eltűntetése kész 
+for (let a = 0; a < dataDivs.length; a++) {
+    dataDivs[a].addEventListener('click',()=> {
         
-    }
-    
+        // jelezzük, h most ez a div activ
+        let activate=dataDivs[a].attributes[1].value
+        for (let index = 0; index < dataDivs.length; index++) {
+            if (dataDivs[index].attributes[1].value==activate) {
+                dataDivs[index].classList.add('active')
+            }
+            // Az összes többit deaktiváljuk
+            if (dataDivs[index].attributes[1].value!=activate) {
+                dataDivs[index].classList.remove('active')
+            }            
+        }
+        // Ez pedig az entries-kel csinálja meg ugyanezt
+        for (let b = 0; b < tableTr.length; b++) {
+            if (tableTr[b].classList[0]==activate) {
+                tableTr[b].classList.add('active')
+            }           
+            if (tableTr[b].classList[0]!=activate) {
+                tableTr[b].classList.remove('active')
+            }
+        }
+    })
+}
+// nyilak elérhetőek => tree megjelenítéshez
+const dataArrowsImgs=document.querySelectorAll("[data-imgarrow]")
+ for (let a = 0; a < dataArrowsImgs.length; a++) {
+    // Mindegyik nyílhez hozzáadjuk a clikkelési eseményt
+    dataArrowsImgs[a].addEventListener('click',()=> {
+       let dataIds=dataArrowsImgs[a].attributes[1].value
+    //    aktív vagy nem aktív?
+       switch (dataArrowsImgs[a].classList.contains('active')) {
+        case false:
+            // ha nem aktív
+           let targetOk1=true
+           let counter1=0
+           do {
+               counter1++
+               for (let g = 0; g < liGroupObj[counter1].length; g++) {
+                   let liValue=liGroupObj[counter1][g].attributes[0].value
+                   if (liValue==dataIds) {
+                       targetOk1=false
+                       if (liGroupObj[counter1][g].childNodes[0]!=undefined) {
+                        dataArrowsImgs[a].classList.add('active')
+                        liGroupObj[counter1][g].childNodes[0].classList.add('active')
+                    }
+                   }
+              }
+           } while (targetOk1);
+        break;
+
+        case true:
+            // ha aktív
+            // Ha becsukom, akkor az aktuális title entries-t mutassa meg.           
+            for (let index = 0; index < dataDivs.length; index++) {
+                let divAttribVal=dataDivs[index].attributes[1].value
+                if (divAttribVal==dataIds) {
+                    dataDivs[index].classList.add('active')
+                }
+                else {dataDivs[index].classList.remove('active')}
+            }
+            for (let index = 0; index < tableTr.length; index++) {
+                let tabAttVal=tableTr[index].classList[0]
+                if (tabAttVal==dataIds) {
+                    tableTr[index].classList.add('active')
+                }
+                else {tableTr[index].classList.remove('active')}
+            }
+            // A nyíl forduljon vissza
+            dataArrowsImgs[a].classList.remove('active')
+            let targetOk=true
+            let counter=0
+            do {
+                counter++
+                for (let g = 0; g < liGroupObj[counter].length; g++) {
+                    let liValue=liGroupObj[counter][g].attributes[0].value
+                    if (liValue==dataIds) {
+                        targetOk=false
+                        if (liGroupObj[counter][g].childNodes[0]!=undefined) {
+                            liGroupObj[counter][g].childNodes[0].classList.remove('active')
+                        }
+                    }
+                }
+            } while (targetOk);
+        break;
+       }
+    })
 }
 }

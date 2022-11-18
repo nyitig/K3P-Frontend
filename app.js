@@ -236,8 +236,9 @@ isTrue=true
       </div>
       ` 
        dashboardContainer.innerHTML=dashboardTemplate
+      Ezt csináld meg 
     */   
-      kdbxDownload()
+      createDashboard()
     }
   }
     
@@ -263,12 +264,98 @@ isTrue=true
     }, 2000);
   }
 })
+let kdbxObject
+
+// Open kdbx file
+
+function openKdbxFile(textTemplate) {
+  const inputSectionContainer=document.getElementById("inputSectionContainer")
+  const inputDivContainer=document.getElementById('inputDivContainer')
+
+  inputDivContainer.innerHTML=textTemplate
+  const cancelKdbxFile=document.getElementById('cancelKdbxFile')
+  inputSectionContainer.classList.toggle('active')
+  // close inputSections
+  cancelKdbxFile.addEventListener("click",()=> {
+    inputSectionContainer.classList.toggle('active')
+    inputDivContainer.innerHTML=""
+  })
+  // kdbxFile download
+  const sendKdbxFilePassword=document.getElementById('sendKdbxFilePassword')
+  const passwordKdbxFile=document.getElementById('passwordKdbxFile')
+  const kdbxPasswordH2=document.getElementById('kdbxPasswordH2')
+
+  // password  storage
+  let tempPassword
+  passwordKdbxFile.addEventListener("keyup",()=> {
+    tempPassword=passwordKdbxFile.value
+    console.log(tempPassword)
+  })
+
+  // sending a request to the server
+
+  sendKdbxFilePassword.addEventListener("click", ()=> {
+    const urlGetToGroup='http://127.0.0.1:9933/api/kdbx/1/groups/get_top_group'
+    const dataTemp=JSON.parse(sessionStorage.getItem('kdbx')) || []
+    let jwtToken=dataK3p[0].user.jwtToken 
+  
+    let bodydataKdbxfileOpen={
+      "kdbxFilePwDto": `${tempPassword}`
+    }
+    let options={
+      method: 'POST',
+      headers: {
+       'Content-Type': 'application/json',
+       'Accept' : 'application/json',
+       'Authorization': `Bearer ${jwtToken}`,
+     },
+      body: JSON.stringify(bodydataKdbxfileOpen),
+      };
+      fetch(urlGetToGroup, options)
+      .then(response => response.json())
+        .then(data =>{
+          if (!data.error) {
+            dataTemp.push([data])
+            sessionStorage.setItem('kdbx', JSON.stringify(dataTemp))
+           
+            let tempJson=JSON.parse(sessionStorage.kdbx)
+            let temp02=tempJson[0][0]
+            kdbxObject={"kdbx":{0:[temp02]},}
+             changeBoxName(kdbxObject['kdbx'])
+             inputSectionContainer.classList.toggle('active')
+             inputDivContainer.innerHTML=""
+          }
+          if (data.error) {
+            kdbxPasswordH2.style.color="red"
+            kdbxPasswordH2.innerHTML="Wrong password!"
+            passwordKdbxFile.value=""
+            setTimeout(() => {
+              kdbxPasswordH2.style.removeProperty('color')
+              kdbxPasswordH2.innerHTML="Please enter the password"
+            }, 3000);
+          }
+        })
+  
+
+  })
+
+}
 
 // kdbx file download
-let kdbxObject
+
 function kdbxDownload() {
 
   // a kapott tokennel lekérjük, majd eltároljuk egy objectben
+  /*
+  localhost:9933/api/kdbx/1/groups/get_top_group 
+  ide kell majd elküldeni a bekért jelszóval együtt, h visszakapjam a JSON file-t
+
+
+  Más group eltáv, létrehozás... jobb egérgombbal
+
+  TODO: js-be milyen encrypt lehetőségek vannak??
+  - target:_blank : memóriát tudok átvinni???
+  */ 
   const urlez='http://127.0.0.1:9933/api/kdbx/1/groups'
   const dataTemp=JSON.parse(sessionStorage.getItem('kdbx')) || []
    let jwtToken=dataK3p[0].user.jwtToken
@@ -308,8 +395,8 @@ let options={
     sessionStorage.setItem('kdbx', JSON.stringify(dataTemp))
    
     let tempJson=JSON.parse(sessionStorage.kdbx)
-    let bigyoka=tempJson[0][0]
-    kdbxObject={"kdbx":{0:[bigyoka]},}
+    let temp02=tempJson[0][0]
+    kdbxObject={"kdbx":{0:[temp02]},}
      createDashboard()
      changeBoxName(kdbxObject['kdbx'])
    })
@@ -559,6 +646,7 @@ function clearInputFields() {
 // !!!!! TODO dashbord class adding: #fullPageSec, #fullPageDivCont, #main !!!!
 // create dashboard Page
 
+
 function createDashboard() {
 const fullPageSec=document.getElementById('fullPageSec')
 const fullPageDivCont=document.getElementById('fullPageDivCont')
@@ -602,6 +690,29 @@ logOut.addEventListener('click',()=>{
     window.location.reload(true)
   }, 2000);
 })
+// Headerbuttons add functions
+const buttonsHeader=document.querySelectorAll('.buttonsHeader')
+for (let index = 0; index < buttonsHeader.length; index++) {
+  buttonsHeader[index].addEventListener("click",()=> {
+    switch (index) {
+      case 5:
+        let textTemplateTemp=`
+      <h2 id="kdbxPasswordH2">Please enter the password</h2>
+      <label for="passwordKdbxFile" class="marginTopLogPage">Password</label>
+      <input type="password" name="passwordKdbxFile" id="passwordKdbxFile" class="" value="" placeholder="" autocomplete="off" required="required">
+      <div id="sendKdbxFilePassword" class="buttons">Send</div>
+      <div id="cancelKdbxFile" class="buttons">Cancel</div>
+        `
+        openKdbxFile(textTemplateTemp)
+        
+        break;
+    
+      default:
+        break;
+    }
+  })
+  
+}
 }
 
 let textTemp=``
@@ -628,18 +739,9 @@ const tableContainer=document.querySelector("#tableContainer tbody")
 let dataTargetId=[]
 let dataIndex=[]
 // Kell egyet a klikknek is készíteni
-// TODO session storage-t átküldeni "új lapra"
 
 // próbatömb
 
-/*
-t1 =""
-Webshop="D"
-hun="DD"
-e-mail="DR"
-VirualBox="DRRD"
-Postman is tudja
-*/ 
 const teszt=document.getElementById('teszt')
 const kdbxFilenameBox=document.querySelectorAll('.kdbxFilenameBox')
 

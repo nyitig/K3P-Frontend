@@ -1083,9 +1083,13 @@ const tableTrSpan=document.querySelectorAll('.tableTrSpan')
 // entries-ek 1 klikk
 for (let index = 0; index < tableTr.length; index++) {
   tableTr[index].addEventListener("click",()=> {
+    for (let asa = 0; asa < tableTr.length; asa++) {
+      tableTr[asa].classList.remove('backgroundColor')
+        }
+        tableTr[index].classList.add('backgroundColor')
     if (kdbxFileFooterInfos.childNodes[0]===undefined) {
-      // össze kell vetni a tableTr[index].classlist[0] vagy mégsem
-      // let classlistThis=tableTr[index].classList[0]
+      // végülis csak azt kell megnézni, h melyik nél van .activ class
+      // onnan kinyerhető a group name
       isTrue=true
       let tt=0
       let groupNames
@@ -1109,6 +1113,7 @@ for (let index = 0; index < tableTr.length; index++) {
       <span>username: ${tableTr[index].childNodes[1].innerHTML}</span>
       <span>password: ${tableTr[index].childNodes[2].innerHTML}</span>
       <span>URL: <a href="${tableTr[index].childNodes[3].innerHTML}" target="_blank" rel="noopener noreferrer">${tableTr[index].childNodes[3].innerHTML}</a></span>
+      <br>
       <span>Notes: ${tableTr[index].childNodes[4].innerHTML}</span>
       </div>
       `
@@ -1146,6 +1151,7 @@ for (let index = 0; index < tableTr.length; index++) {
         <span>username: ${tableTr[index].childNodes[1].innerHTML}</span>
         <span>password: ${tableTr[index].childNodes[2].innerHTML}</span>
         <span>URL: <a href="${tableTr[index].childNodes[3].innerHTML}" target="_blank" rel="noopener noreferrer">${tableTr[index].childNodes[3].innerHTML}</a></span>
+        <br>
         <span>Notes: ${tableTr[index].childNodes[4].innerHTML}</span>
         </div>
         `
@@ -1161,8 +1167,13 @@ for (let index = 0; index < tableTr.length; index++) {
   })
   
 }
-
-
+const fullPageSec=document.getElementById('fullPageSec')
+const contextGroupMenu=document.getElementById('contextGroupMenu')
+fullPageSec.addEventListener("click",()=>{
+  if (contextGroupMenu.classList.contains('active')) {
+    contextGroupMenu.classList.remove('active')
+  }
+})
 // data-div katt=> toggle tableTr
 // Entries-ek megjelenítése, eltűntetése kész 
 for (let a = 0; a < dataDivs.length; a++) {
@@ -1189,6 +1200,22 @@ for (let a = 0; a < dataDivs.length; a++) {
             }
         }
     })
+    // right mouse click => menu
+    dataDivs[a].addEventListener("contextmenu", (event) =>{
+      event.preventDefault();
+      const {clientX:mouseX, clientY:mouseY}=event;
+      contextGroupMenu.style.top=`${mouseY}px`;
+      contextGroupMenu.style.left=`${mouseX}px`;
+      contextGroupMenu.classList.add('active')
+      let groupNameClick=dataDivs[a].children[1].innerHTML
+      let targetIdTemp=dataDivs[a].parentNode.parentNode.attributes[3].nodeValue
+      console.log("groupname: "+groupNameClick)
+      console.log("targetID: "+targetIdTemp)
+      // Megvan a group nnaem és a target ID
+      // Most már csak a különböző funkciókat kell hozzá adni
+      // Innen folytasd
+    })
+
 }
 // nyilak elérhetőek => tree megjelenítéshez
 const dataArrowsImgs=document.querySelectorAll("[data-imgarrow]")

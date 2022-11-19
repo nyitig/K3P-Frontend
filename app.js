@@ -1032,7 +1032,7 @@ function entriesCreat(obj,level,liGroupObjActLev) {
    let objEntries=Object.entries(obj)
     for (let a =0; a<objEntries.length; a++) {
             // debugger
-        tableTextTemp+="<tr class="+"groups0"+`${level}`+"ind0"+`${indexHead}`+">"
+        tableTextTemp+="<tr class="+"groups0"+`${level}`+"ind0"+`${indexHead}`+" "+">"
           let objEntriesTemp=objEntries[a]
           let propertiesObj=objEntriesTemp[1].properties
           let propertiesObjTemp=Object.entries(propertiesObj)
@@ -1041,7 +1041,7 @@ function entriesCreat(obj,level,liGroupObjActLev) {
                 let titleTdtemp=`<td>
                 <div class="row alignCenter">
                 <img src="assets/pic/key-outline.svg"  alt="" class="liArrow">
-                <span>${propertiesObjTemp[b][1].value}</span>
+                <span class="tableTrSpan">${propertiesObjTemp[b][1].value}</span>
                 </div>
                 </td>`
                 titleTd=titleTdtemp.replaceAll(/`/g, "")
@@ -1074,10 +1074,95 @@ Fa megjelnítés elkészítése
 for (let a = 1; a < tableContainer.children.length; a++) {
     tableContainer.children[a].classList.add('tableTr')    
 }
-// entries-ek <tr> elérések
-const tableTr=document.querySelectorAll('.tableTr')
 // divek elérhetőek=> entries-ek megjelenítéséhez
 const dataDivs=document.querySelectorAll("[data-div]")
+// entries-ek <tr> elérések
+const tableTr=document.querySelectorAll('.tableTr')
+const kdbxFileFooterInfos=document.getElementById('kdbxFileFooterInfos')
+const tableTrSpan=document.querySelectorAll('.tableTrSpan')
+// entries-ek 1 klikk
+for (let index = 0; index < tableTr.length; index++) {
+  tableTr[index].addEventListener("click",()=> {
+    if (kdbxFileFooterInfos.childNodes[0]===undefined) {
+      // össze kell vetni a tableTr[index].classlist[0] vagy mégsem
+      // let classlistThis=tableTr[index].classList[0]
+      isTrue=true
+      let tt=0
+      let groupNames
+      do {
+        if (dataDivs[tt]===undefined) {
+          // nehogy végtelen ciklus legyen
+          isTrue=false
+        }
+        if (dataDivs[tt].classList.contains('active')) {
+          isTrue=false
+           groupNames=dataDivs[tt].children[1].innerHTML
+        }
+        tt++
+      } while (isTrue);
+      
+      let entriesName=tableTrSpan[index].innerHTML
+      let fileinfoTemplate=`
+      <div id="kdbxFooterInfosEntriesDiv">
+      <span>Group: ${groupNames}</span>
+      <span>Title: ${entriesName}</span>
+      <span>username: ${tableTr[index].childNodes[1].innerHTML}</span>
+      <span>password: ${tableTr[index].childNodes[2].innerHTML}</span>
+      <span>URL: <a href="${tableTr[index].childNodes[3].innerHTML}" target="_blank" rel="noopener noreferrer">${tableTr[index].childNodes[3].innerHTML}</a></span>
+      <span>Notes: ${tableTr[index].childNodes[4].innerHTML}</span>
+      </div>
+      `
+      kdbxFileFooterInfos.innerHTML=fileinfoTemplate
+      const kdbxFooterInfosEntriesDiv=document.getElementById('kdbxFooterInfosEntriesDiv')
+      setTimeout(() => {
+        kdbxFooterInfosEntriesDiv.classList.add('active')
+      }, 300);
+    }
+    else {
+      kdbxFooterInfosEntriesDiv.classList.remove('active')
+      
+      setTimeout(() => {
+       
+        kdbxFileFooterInfos.innerHTML=""
+        isTrue=true
+      let ttd=0
+      let groupNames
+      do {
+        if (dataDivs[ttd]===undefined) {
+          // nehogy végtelen ciklus legyen
+          isTrue=false
+        }
+        if (dataDivs[ttd].classList.contains('active')) {
+          isTrue=false
+           groupNames=dataDivs[ttd].children[1].innerHTML
+        }
+        ttd++
+      } while (isTrue);
+        let entriesName=tableTrSpan[index].innerHTML
+        let fileinfoTemplate=`
+        <div id="kdbxFooterInfosEntriesDiv">
+        <span>Group: ${groupNames}</span>
+        <span>Title: ${entriesName}</span>
+        <span>username: ${tableTr[index].childNodes[1].innerHTML}</span>
+        <span>password: ${tableTr[index].childNodes[2].innerHTML}</span>
+        <span>URL: <a href="${tableTr[index].childNodes[3].innerHTML}" target="_blank" rel="noopener noreferrer">${tableTr[index].childNodes[3].innerHTML}</a></span>
+        <span>Notes: ${tableTr[index].childNodes[4].innerHTML}</span>
+        </div>
+        `
+        kdbxFileFooterInfos.innerHTML=fileinfoTemplate
+        const kdbxFooterInfosEntriesDiv=document.getElementById('kdbxFooterInfosEntriesDiv')
+       setTimeout(() => {
+        kdbxFooterInfosEntriesDiv.classList.add('active')
+       }, 300);
+      }, 1000);
+    }
+
+
+  })
+  
+}
+
+
 // data-div katt=> toggle tableTr
 // Entries-ek megjelenítése, eltűntetése kész 
 for (let a = 0; a < dataDivs.length; a++) {

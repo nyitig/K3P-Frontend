@@ -31,6 +31,9 @@
 *::-webkit-scrollbar {
   display: none;
 }
+a {
+  color: black;
+}
 .hide {
   display: none;
 }
@@ -419,8 +422,8 @@ border-right: none;
   padding: 10vh 0;
   justify-content: center;
   position: absolute;
-  top: 0;
-  left: -1800px;
+  top: -800px;
+  left: 0px;
   z-index: 1000;
   width: 100%;
   height: 100vh;
@@ -428,7 +431,7 @@ border-right: none;
   background-color: transparent;
 }
 #inputSectionContainer.active {
-  left: 0px;
+  top: 0px;
 }
 #inputDivContainer {
   display: flex;
@@ -442,7 +445,7 @@ border-right: none;
 }
 
 /* Context menu (for right click) */
-#contextGroupMenu {
+#contextGroupMenu, #contextEntriesMenuCont {
   display: none;
   position: fixed;
   z-index: 10000;
@@ -452,10 +455,10 @@ border-right: none;
   box-shadow: 1px 15px 50px rgba(0,0,0, 0.9);
   text-align: center;
 }
-#contextGroupMenu.active {
+#contextGroupMenu.active, #contextEntriesMenuCont.active {
   display: block;
 }
-#contextGroupMenu .groupMenuItem {
+#contextGroupMenu .groupMenuItem, #contextEntriesMenuCont .entriesMenuItem {
   padding: 0.2rem 0.3rem;
   font-size: 0.9rem;
   color: black;
@@ -464,10 +467,38 @@ border-right: none;
   border-radius: inherit;
   border-bottom: 1px solid black;
 }
-#contextGroupMenu .groupMenuItem:hover {
+#contextGroupMenu .groupMenuItem:hover, #contextEntriesMenuCont .entriesMenuItem:hover {
   background-color: lightgray;
 }
 
+/* add new group input container style */
+
+.contextInputPage {
+  display: flex;
+  justify-content: center;
+  height: 0vh;
+  overflow: hidden;
+}
+.contextInputPage.active{
+  height: 100vh;
+}
+
+.textAlItCent {
+  text-align: center;
+  align-items: center;
+}
+.loading {
+  display: inline-block;
+  animation: rotation 3s infinite linear;
+}
+@keyframes rotation {
+  50% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
 
 @media screen and (max-width:400px) {
   #header {

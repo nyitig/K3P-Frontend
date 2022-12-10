@@ -1,3 +1,86 @@
+// Open new tab - add sessionstorage
+// Link: https://blog.guya.net/2015/06/12/sharing-sessionstorage-between-tabs-for-secure-multi-tab-authentication/
+(function() {
+
+  if (!sessionStorage.length) {
+    // Ask other tabs for session storage
+    localStorage.setItem('getSessionStorage', Date.now());
+  };
+
+  window.addEventListener('storage', function(event) {
+
+    if (event.key == 'getSessionStorage') {
+      // Some tab asked for the sessionStorage -> send it
+
+      localStorage.setItem('sessionStorage', JSON.stringify(sessionStorage));
+      localStorage.removeItem('sessionStorage');
+
+    } else if (event.key == 'sessionStorage' && !sessionStorage.length) {
+      // sessionStorage is empty -> fill it
+      var data = JSON.parse(event.newValue),
+            value;
+
+      for (key in data) {
+        sessionStorage.setItem(key, data[key]);
+      }
+      dataK3p=JSON.parse(sessionStorage.user)
+      // showSessionStorage();
+    }
+  });
+
+  window.onbeforeunload = function() {
+    //sessionStorage.clear();
+  };
+  window.addEventListener('load', function() {
+    setTimeout(() => {
+      if (dataK3p===undefined) {
+        console.log("Üres a dataK3p")
+        return
+      }
+      if (dataK3p.length>0) {
+        console.log("Nem üres a sessionStorage")
+        openNewTab()
+      }
+    }, 250);
+
+  })
+
+
+  /* This code is only for the UI in the demo, it's not part of the sulotion */
+
+  let el;
+// Innen folytasd! Itt kell kitalálni, h mikor mit csináljon
+/*
+Tehát mit is kell csináljon?
+
+- az elején ellenőrizni kell, h van-e a sessionStorage-ban vmi?
+- ha nincs, akkor kilép, 
+
+
+
+  function showSessionStorage() {
+    el.innerHTML = sessionStorage.length ? JSON.stringify(sessionStorage) : 'sessionStorage is empty';
+  }
+
+  window.addEventListener('load', function() {
+    el = document.getElementById('storageData');
+    showSessionStorage();
+
+    document.getElementById('addData').addEventListener('click', function() {
+      let dataTemp=[]
+      dataTemp.push({user: dataObj})
+      sessionStorage.setItem('user',JSON.stringify(dataTemp));
+      showSessionStorage();
+    })
+
+    document.getElementById('clearData').addEventListener('click', function() {
+      sessionStorage.clear();
+      showSessionStorage();
+    })
+  })
+*/ 
+})();
+
 // with buttons to switch between pages
       // TODO registerbutton, other buttons
 const loginButton=document.getElementById('loginButton')
@@ -9,7 +92,30 @@ const registerPage=document.getElementById('registerPage')
 const registerBack=document.getElementById('registerBack')
 const main=document.getElementById('main')
 const inputfields=document.querySelectorAll('input')
+// kdbxFileDatabox items
+const kdbxFilenameBox=document.querySelectorAll('.kdbxFilenameBox')
+let kdbxFileDataboxLeft=document.getElementById('kdbxFileDataboxLeft')
+let kdbxFileDataboxRight=document.getElementById('kdbxFileDataboxRight')
+let kdbxFileDataboxRightTableTemplate=`
+  <table id="tableContainer">
+  <tbody>
+  <tr>
+    <th>Title</th>
+    <th>Username</th>
+    <th>Password</th>
+    <th>URL</th>
+    <th>Notes</th>
+  </tr>
+  </tbody>
+  </table>
+`
+let kdbxFileIndex
+// input section & input div
+const inputSectionContainer=document.getElementById("inputSectionContainer")
+const inputDivContainer=document.getElementById('inputDivContainer')
 let isTrue=false
+let groupNameClick
+let targetIdTemp
   // TODO create funtion!!!
 // login button
 loginButton.addEventListener("click", ()  => {
@@ -269,8 +375,6 @@ let kdbxObject
 // Open kdbx file
 
 function openKdbxFile(textTemplate) {
-  const inputSectionContainer=document.getElementById("inputSectionContainer")
-  const inputDivContainer=document.getElementById('inputDivContainer')
 
   inputDivContainer.innerHTML=textTemplate
   const cancelKdbxFile=document.getElementById('cancelKdbxFile')
@@ -289,7 +393,6 @@ function openKdbxFile(textTemplate) {
   let tempPassword
   passwordKdbxFile.addEventListener("keyup",()=> {
     tempPassword=passwordKdbxFile.value
-    console.log(tempPassword)
   })
 
   // sending a request to the server
@@ -349,9 +452,6 @@ function kdbxDownload() {
   /*
   localhost:9933/api/kdbx/1/groups/get_top_group 
   ide kell majd elküldeni a bekért jelszóval együtt, h visszakapjam a JSON file-t
-
-
-  Más group eltáv, létrehozás... jobb egérgombbal
 
   TODO: js-be milyen encrypt lehetőségek vannak??
   - target:_blank : memóriát tudok átvinni???
@@ -662,14 +762,14 @@ const footerContainer=document.getElementById('footerContainer')
 let tree
 
 // Header change
-fullPageSec.classList.toggle('dashboard')
-fullPageDivCont.classList.toggle('dashboard')
-header.classList.toggle('dashboard')
-footer.classList.toggle('dashboard')
-footerContainer.classList.toggle('dashboard')
-main.classList.toggle('dashboard')
-beginHeader.classList.toggle('active')
-dashboardHeader.classList.toggle('active')
+fullPageSec.classList.add('dashboard')
+fullPageDivCont.classList.add('dashboard')
+header.classList.add('dashboard')
+footer.classList.add('dashboard')
+footerContainer.classList.add('dashboard')
+main.classList.add('dashboard')
+beginHeader.classList.remove('active')
+dashboardHeader.classList.add('active')
 
 
 // Settings menu clicked (open and close)
@@ -687,7 +787,10 @@ logOut.addEventListener('click',()=>{
   main.innerHTML=`<h1>Hi!<h1>`
   setTimeout(() => {
     sessionStorage.clear()
-    window.location.reload(true)
+    setTimeout(() => {
+      window.location.reload(true)
+    }, 1000);
+    
   }, 2000);
 })
 // Headerbuttons add functions
@@ -713,6 +816,9 @@ for (let index = 0; index < buttonsHeader.length; index++) {
   })
   
 }
+// click context menu
+contextMenuClick()
+
 }
 
 let textTemp=``
@@ -735,43 +841,85 @@ let olOpenObj
 let classIDNames=[]
 let classClickObj={}
 let classGroups=[]
-const tableContainer=document.querySelector("#tableContainer tbody")
+let tableContainer=document.querySelector("#tableContainer tbody")
 let dataTargetId=[]
 let dataIndex=[]
-// Kell egyet a klikknek is készíteni
+
+// all obj & arr for kdbx file load  clear function
+function allObjArrForKdbxFile() {
+    textTemp=``
+    level=0
+    indexHead=0
+    IDIndex=0
+    groupIDNames=[]
+    liGroupObjActLev=0
+    liGroupObj={}
+    liGroups=[]
+    olGroupsObj={}
+    olGroups=[]
+    olGroupNames=[]
+    searchObj={}
+    tabClass=[]
+    liClickObj
+    olOpenObj
+    classIDNames=[]
+    classClickObj={}
+    classGroups=[]
+    dataTargetId=[]
+    dataIndex=[]
+}
 
 // próbatömb
 
 const teszt=document.getElementById('teszt')
-const kdbxFilenameBox=document.querySelectorAll('.kdbxFilenameBox')
 
-/*
-Innen folytasd! M jelenleg csak klikkre jeleníti meg 
-
-*/ 
+function kdbxFileDataboxRightCreatTable() {
+  kdbxFileDataboxRight.innerHTML=""
+  kdbxFileDataboxRight.innerHTML=kdbxFileDataboxRightTableTemplate
+  tableContainer=document.querySelector("#tableContainer tbody")
+}
 
 function changeBoxName(obj) {
-    // debugger
+  kdbxFileDataboxRight.innerHTML=""
+  kdbxFileDataboxRight.innerHTML=kdbxFileDataboxRightTableTemplate
+  tableContainer=document.querySelector("#tableContainer tbody")
     for (let  i= 0;  i< obj[0].length; ++i) {
       kdbxFilenameBox[i].innerHTML=obj[0][i].name
-    //   ide adj egy click-es eventet, ami hatására az adott rész fog betöltődni.
       kdbxFilenameBox[i].addEventListener("click", ()=>{
-        let kdbxFileDataboxLeft=document.getElementById('kdbxFileDataboxLeft')
-        kdbxFileDataboxLeft.innerHTML=""
-        liGroups=[kdbxFileDataboxLeft]
-        let newliGroup={[level]:liGroups}
-        liGroupObj={...liGroupObj,...newliGroup}
-        searchObj={...obj}
-
-        objectHeadquaders(searchObj,level,indexHead)
-      })  
+        // debugger
+        kdbxFileIndex=i
+        kdbxFileBoxClick(kdbxFileIndex)
+        })  
         }
   }
+/*
+Mit is kellene csináljon?
+Az lenne a lényeg, h a klikkeléstől válasszuk külön a funkciót
+Azaz itt az a lényeg, h azonosítsuk vmivel azt a kdbx fájlt, aminek az objectumát megjelenítjük
+
+*/
+function kdbxFileBoxClick(index) {
+  kdbxFileDataboxLeft=document.getElementById('kdbxFileDataboxLeft')
+  kdbxFileDataboxLeft.innerHTML=""
+  kdbxFileDataboxRightCreatTable()
+  allObjArrForKdbxFile()
+  // ezt majd le kell tesztelni akkor is, amikor már több kdbx fájl lett letöltve. Most működik. :)
+  let tempJson=JSON.parse(sessionStorage.kdbx)
+  let temp02=tempJson[index][0]
+  kdbxObject={"kdbx":{0:[temp02]},}
+  liGroups=[kdbxFileDataboxLeft]
+  let newliGroup={[level]:liGroups}
+  liGroupObj={...liGroupObj,...newliGroup}
+  searchObj={...kdbxObject['kdbx']}
+
+  objectHeadquaders(searchObj,level,indexHead)
+
+}
 
   // Object bejárás
 
   function objectHeadquaders(obj,level,index) {  
-    // debugger
+    //  debugger
             let result = Object.entries(obj)
             // console.log(result.length)
             if (result.length>0) {
@@ -886,7 +1034,6 @@ for (let a = 0; a < olGroupObjEntr.length; a++) {
 }
 
 function objectCommander(obj1,level,index) {
-    // debugger
    if (obj1.length>0) {
       textTemp+=`<div id="lev${level}index${index}" class="tab">
       <ol data-ol="lev${level}index${index}" data-level="${level}" data-target="" class="column olS" >`
@@ -916,7 +1063,6 @@ function objectCommander(obj1,level,index) {
    for (let z = 0; z < obj1.length; z++) {
     let idGroup=groupIDNames[z]
     liGroups=document.getElementById(idGroup)
-    // debugger
     classGroups=document.getElementsByClassName(idGroup)
 
 
@@ -1022,7 +1168,6 @@ function objectKeySelector(obj1,ind,level,levelIndex) {
 }
 
 function entriesCreat(obj,level,liGroupObjActLev) {
-    //  debugger
     let tableTextTemp=""
     let titleTd
     let usernameTd
@@ -1031,7 +1176,6 @@ function entriesCreat(obj,level,liGroupObjActLev) {
     let notesTd
    let objEntries=Object.entries(obj)
     for (let a =0; a<objEntries.length; a++) {
-            // debugger
         tableTextTemp+="<tr class="+"groups0"+`${level}`+"ind0"+`${indexHead}`+" "+">"
           let objEntriesTemp=objEntries[a]
           let propertiesObj=objEntriesTemp[1].properties
@@ -1067,6 +1211,25 @@ function entriesCreat(obj,level,liGroupObjActLev) {
 let tableOpenClassArr
 let counter=0
 
+// context menues closeing functions
+
+function closeContextGropMenu() {
+  if (contextGroupMenu.classList.contains('active')) {
+    contextGroupMenu.classList.remove('active')
+    targetIdTemp=""
+    groupNameClick=""
+  }
+}
+
+function closeContextEntriesMenu() {
+  if (contextEntriesMenuCont.classList.contains('active')) {
+    contextEntriesMenuCont.classList.remove('active')
+    // idtt majd le kell 0-ni az entries-hez tartozó változók értékeit.
+  }
+  
+}
+
+
 function addTreeClick() {
 /*
 Fa megjelnítés elkészítése
@@ -1080,8 +1243,11 @@ const dataDivs=document.querySelectorAll("[data-div]")
 const tableTr=document.querySelectorAll('.tableTr')
 const kdbxFileFooterInfos=document.getElementById('kdbxFileFooterInfos')
 const tableTrSpan=document.querySelectorAll('.tableTrSpan')
-// entries-ek 1 klikk
+// entries-ek 1 klikk, right click
+const contextEntriesMenuCont=document.getElementById('contextEntriesMenuCont')
+const entriesMenuItem=document.querySelectorAll('.entriesMenuItem')
 for (let index = 0; index < tableTr.length; index++) {
+  // left click
   tableTr[index].addEventListener("click",()=> {
     for (let asa = 0; asa < tableTr.length; asa++) {
       tableTr[asa].classList.remove('backgroundColor')
@@ -1165,14 +1331,27 @@ for (let index = 0; index < tableTr.length; index++) {
 
 
   })
-  
+  //  right click
+tableTr[index].addEventListener("contextmenu", (event)=>{
+  event.preventDefault();
+  // Ha a group context menu nyitva van, akkor azt becsukjuk
+  closeContextGropMenu()
+  const {clientX:mouseX, clientY:mouseY}=event;
+  contextEntriesMenuCont.style.top=`${mouseY}px`;
+  contextEntriesMenuCont.style.left=`${mouseX}px`;
+  contextEntriesMenuCont.classList.add('active')
+  // INNEN FOLYTASD! 
+})
+
 }
 const fullPageSec=document.getElementById('fullPageSec')
 const contextGroupMenu=document.getElementById('contextGroupMenu')
+
 fullPageSec.addEventListener("click",()=>{
-  if (contextGroupMenu.classList.contains('active')) {
-    contextGroupMenu.classList.remove('active')
-  }
+  // for group context menu
+  closeContextGropMenu()
+  // for entries context menu
+  closeContextEntriesMenu()
 })
 // data-div katt=> toggle tableTr
 // Entries-ek megjelenítése, eltűntetése kész 
@@ -1203,17 +1382,19 @@ for (let a = 0; a < dataDivs.length; a++) {
     // right mouse click => menu
     dataDivs[a].addEventListener("contextmenu", (event) =>{
       event.preventDefault();
+
+      // close contextMenuEnrties
+      closeContextEntriesMenu()
+
       const {clientX:mouseX, clientY:mouseY}=event;
       contextGroupMenu.style.top=`${mouseY}px`;
       contextGroupMenu.style.left=`${mouseX}px`;
       contextGroupMenu.classList.add('active')
-      let groupNameClick=dataDivs[a].children[1].innerHTML
-      let targetIdTemp=dataDivs[a].parentNode.parentNode.attributes[3].nodeValue
-      console.log("groupname: "+groupNameClick)
-      console.log("targetID: "+targetIdTemp)
-      // Megvan a group nnaem és a target ID
-      // Most már csak a különböző funkciókat kell hozzá adni
-      // Innen folytasd
+      groupNameClick=dataDivs[a].children[1].innerHTML
+      targetIdTemp=dataDivs[a].parentNode.parentNode.attributes[3].nodeValue
+
+      // click context menu and add functions
+      
     })
 
 }
@@ -1282,3 +1463,454 @@ const dataArrowsImgs=document.querySelectorAll("[data-imgarrow]")
     })
 }
 }
+function contextMenuClick() {
+  const groupMenuItem=document.querySelectorAll('.groupMenuItem')
+  for (let aba = 0; aba < groupMenuItem.length; aba++) {
+    groupMenuItem[aba].addEventListener("click",()=> {
+      switch (aba) {
+        case 0:
+          console.log("Add")
+        addNewGroup()
+          break;
+        case 1:
+          console.log("Edit")
+          console.log("targetID: "+targetIdTemp)
+          console.log("groupname: "+groupNameClick)
+          break;
+        case 2:
+          deleteGroup()
+          console.log("Delete")
+          console.log("targetID: "+targetIdTemp)
+          console.log("groupname: "+groupNameClick)
+          break;
+        case 3:
+          console.log("Open new Tab")
+          console.log("targetID: "+targetIdTemp)
+          console.log("groupname: "+groupNameClick)
+          break;
+        case 4:
+          console.log("Other")
+          console.log("targetID: "+targetIdTemp)
+          console.log("groupname: "+groupNameClick)
+          break;
+        default:
+          break;
+      }
+    })
+    
+  }
+}
+function inputSectCancelButtonClick() {
+  const buttonCancel=document.querySelectorAll('.buttonCancel')
+  for (let index = 0; index < buttonCancel.length; index++) {
+    buttonCancel[index].addEventListener('click', ()=>{
+      inputSectionContainer.classList.remove('active')
+      inputDivContainer.innerHTML=""
+       groupNameClick=""
+       targetIdTemp=""
+    })
+    
+  }
+}
+
+// GROUP FUNCTIONS
+
+
+function addNewGroup() {
+  contextGroupMenu.classList.remove('active')
+  /*
+  Mit is kell csinálni?
+  - az input containert fel kell tölteni a megfelelő tagekkel:
+    - h2: add meg az új csoport nevét
+    - input, ahová be tudja írni az újnevet
+    - 2 gomb: ok, ill cancel
+  - Ok és cancel gombokat bekötni
+  - ha cancel, akkor bezár az input container és minden változó alaphelyzetbe állítani
+  - ha ok: akkor input containerbe új elemek jelenjenek meg:
+    - Biztos?
+    input mező, ahová be tudja írni a kdbx fájl jelszavát
+    - 2 gomb send és cancel
+  - a send és cancel gombok bekötése
+  - ha cancel, akkor bezár az input container és minden változó alaphelyzetbe állítani
+  - ha send:
+    - törölni a sessionstorage kdbx bejegyzést
+    - elküldeni az adatokat
+    - megvárni, míg visszajön a szerverről az üzi. innerHtml vmi animot betenni
+    - ha minden rendben van:
+      - input Container-ben a kérés végrehajtva szöveg, 
+      -ok button
+      -ok button bekötése
+        -ha ráklikk: kirajzolni a kapott Jsont, -input Container becsuk és .innerHtml=""
+    - ha vmi nincs rendben
+      -input Container: vmi nincs rendben szöveg
+        - 2 gomb: újra és cancel gomb
+        - 2 gombot bekötni
+        -ha cancel, akkor input container becsuk, innerHtml=""
+          -ha újra: akkor az input Container innerHtml: Password input, send és cancel Majd onnan folytatódik
+ 
+  */ 
+//  create input container template
+  let addGroupTextTempl=`
+  <div id="addNWGRFirst" class="column textAlItCent contextInputPage">
+    <h2>Enter the name of the new group</h2>
+    <label for="addNWGRINput" class="marginTopLogPage">New group name:</label>
+    <input type="text" name="addNWGRINput" id="addNWGRINput" placeholder="group name" autocomplete="off" value="">
+    <div id="addNWGRSecPage" class="buttons">Ok</div>
+    <div id="" class="buttons buttonCancel">Cancel</div>
+  </div>
+  <div id="addNWGRSec" class="column textAlItCent contextInputPage">
+    <h3 id="newGroupNameSecP"><h3>
+    <h2 id="addNwGRPasswordH2" class="marginTopLogPage">Please enter the password</h2>
+    <label for="passwordKdbxFile" class="marginTopLogPage">Password</label>
+    <input type="password" name="passwordKdbxFile" id="addNewGRPPasswordKdbxFile" class="" value="" placeholder="" autocomplete="off" required="required">
+    <div id="addNWGRFirstSend" class="buttons">Send</div>
+    <div id="" class="buttons buttonCancel">Cancel</div>
+  </div>
+  <div id="addNWGRThird" class="column textAlItCent contextInputPage">
+    <h2>Request sent. Please wait...</h2>
+    <img src="assets/pic/arrow-forward-circle-outline.svg" class="loading closeSVG marginTopLogPage" alt="">
+    <div id="" class="buttons marginTopLogPage buttonCancel">Cancel</div>
+  </div>
+  <div id="addNWGRFourth" class="column textAlItCent contextInputPage">
+    <h2>New group added</h2>
+    <div id="addNWGREnd" class="buttons buttonCancel">Ok</div>
+  </div>
+  <div id="addNWGRFifht" class="column textAlItCent contextInputPage">
+  <h2>There's something wrong. Will you try again?</h2>
+  <div id="buttonWrongOk" class="buttons ">Ok</div>
+  <div id="" class="buttons buttonCancel">Cancel</div>
+</div>
+`
+inputDivContainer.innerHTML=addGroupTextTempl
+// const
+const addNWGRFirst=document.getElementById('addNWGRFirst')
+const addNWGRSec=document.getElementById('addNWGRSec')
+const addNWGRThird=document.getElementById('addNWGRThird')
+const addNWGRFourth=document.getElementById('addNWGRFourth')
+const addNWGRFifht=document.getElementById('addNWGRFifht')
+const newGroupNameSecP=document.getElementById('newGroupNameSecP')
+const addNewGRPPasswordKdbxFile=document.getElementById('addNewGRPPasswordKdbxFile')
+const buttonWrongOk=document.getElementById('buttonWrongOk')
+const addNwGRPasswordH2=document.getElementById('addNwGRPasswordH2')
+
+// input section container see
+
+inputSectionContainer.classList.add('active')
+addNWGRFirst.classList.add('active')
+
+// cancel button click
+inputSectCancelButtonClick() 
+
+let newgroupName=""
+  // addNWGRINput 
+addNWGRINput.addEventListener("keyup", ()=>{
+newgroupName=addNWGRINput.value
+})
+  // First Ok button add click
+  addNWGRSecPage.addEventListener("click", ()=>{
+    if (newgroupName!="") {
+      newGroupNameSecP.innerHTML=`The new group name is: ${newgroupName}`
+     addNWGRFirst.classList.remove('active')
+    addNWGRINput.value=""
+    addNWGRSec.classList.add("active") 
+    }
+  })
+
+  // Password input add event
+  let passwordKdbxFileAddGroup
+  addNewGRPPasswordKdbxFile.addEventListener("keyup",()=>{
+    passwordKdbxFileAddGroup=addNewGRPPasswordKdbxFile.value
+  })
+
+  // Send button add click
+
+addNWGRFirstSend.addEventListener("click",()=>{
+  if (addNewGRPPasswordKdbxFile.value!="") {
+    let dataTemp=[]
+    // second page close, third page open
+    addNWGRSec.classList.remove('active')
+    addNWGRThird.classList.add('active')
+    // sessionStorege kdbx key delete
+    sessionStorage.removeItem("kdbx")
+    // send data
+    let jwtToken=dataK3p[0].user.jwtToken 
+    const urlAddNewGroup='http://127.0.0.1:9933/api/kdbx/1/groups'
+    
+    let bodydata= {       
+      "kdbxFileDto":
+      {
+          "kdbxFilePwDto":  passwordKdbxFileAddGroup
+      },
+      
+      "groupDto":
+      {
+          "expiresDto": "",
+          "groupExpiryTimeDto": "",
+          "sourceGroupDirectionDto" : "",
+          "targetGroupDirectionDto": targetIdTemp,
+          "groupNameDto": newgroupName
+      }
+  }
+  let options={
+    method: 'POST',
+    headers: {
+     'Content-Type': 'application/json',
+     'Accept' : 'application/json',
+     'Authorization': `Bearer ${jwtToken}`,
+   },
+    body: JSON.stringify(bodydata),
+    };
+    try {
+      fetch(urlAddNewGroup,options)
+      .then(response => response.json())
+  .then(data => {
+    dataTemp.push([data])
+    sessionStorage.setItem('kdbx', JSON.stringify(dataTemp))
+    kdbxFileBoxClick(kdbxFileIndex)
+    addNWGRThird.classList.remove('active')
+    addNWGRFourth.classList.add('active')
+  })
+    } catch (error) {
+      // if error inputSection => error page open
+      addNWGRThird.classList.remove('active')
+      addNWGRFifht.classList.add('active')
+      buttonWrongOk.addEventListener('click',()=>{
+        addNewGroup()
+      })
+      console.log("Vmi nem megy")
+    }
+  }
+    // if password input is empty
+  if (addNewGRPPasswordKdbxFile.value=="") {
+      addNwGRPasswordH2.classList.add('warningTextColor')
+      setTimeout(() => {
+        addNwGRPasswordH2.classList.remove('warningTextColor')
+     }, 3000);    
+  }
+})
+}
+
+function editGroup() {
+
+  console.log("work in progress...")
+  
+}
+
+function deleteGroup() {
+  contextGroupMenu.classList.remove('active')
+
+  /*
+
+  EZ JELENELG NEM MŰKÖDIK, MIVEL A SZERVER 403-AS HIBÁT DOB AZ OPTIONS KÉRÉSRE, A DELETE  METÓDUST PEDID
+  A CORS MIATT BLOKKOLJA A BÖNGÉSZŐ!
+
+
+  
+  Mit is kell csinálni?
+
+hasonló lesz a felállás, mint az addGroupnál:
+input-ot feltölteni a megfelelő templattel
+  1 page
+  -bekérni a group nevét és megjeleníteni
+  - bitos, h törölni akarod?
+  -ok, Cancel 
+  -bekötni az ok és a cancel buttonokat (itt a cancel-t csak meg kell hívni)
+  -ha ok, akkor jöhet a 2. ablak
+  2 page
+  - add meg a jelszót
+  - send és cancel button
+  - ezek bekötése
+  -send => 3 page open
+  3 page info text and cancel buttons
+  - ha megjött a requestre az eredmény akkor annak megfelelően:
+  ha minden ok, akkor 4. page, ha nem, akkor 5.page nyit
+  4 page == addGroup 4 page
+  5- page == addGroup 5. page
+  */ 
+
+  // crate delete input container
+  let deleteGroupTextTempl=`
+  <div id="deleteGRFirst" class="column textAlItCent contextInputPage ">
+    <h2 class="marginTopLogPage">The name of the group you want to delete:</h2>
+    <h1>${groupNameClick}<h1>
+    <h3>Are you sure?<h3>
+    <div id="deleteGRSecPage" class="buttons">Ok</div>
+    <div id="" class="buttons buttonCancel">Cancel</div>
+  </div>
+  <div id="deleteGRSec" class="column textAlItCent contextInputPage">
+    <h2 id="deleteGRPasswordH2" class="marginTopLogPage">Please enter the password</h2>
+    <label for="passwordKdbxFile" class="marginTopLogPage">Password</label>
+    <input type="password" name="passwordKdbxFile" id="deleteGRPPasswordKdbxFile" class="" value="" placeholder="" autocomplete="off" required="required">
+    <div id="deleteGRFirstSend" class="buttons">Send</div>
+    <div id="" class="buttons buttonCancel">Cancel</div>
+  </div>
+  <div id="deleteGRThird" class="column textAlItCent contextInputPage">
+    <h2>Request sent. Please wait...</h2>
+    <img src="assets/pic/arrow-forward-circle-outline.svg" class="loading closeSVG marginTopLogPage" alt="">
+    <div id="" class="buttons marginTopLogPage buttonCancel">Cancel</div>
+  </div>
+  <div id="deleteGRFourth" class="column textAlItCent contextInputPage">
+    <h2>The ${groupNameClick} group has been deleted</h2>
+    <div id="deleteGREnd" class="buttons buttonCancel">Ok</div>
+  </div>
+  <div id="deleteGRFifht" class="column textAlItCent contextInputPage">
+  <h2>There's something wrong. Will you try again?</h2>
+  <div id="buttonWrongOk" class="buttons ">Ok</div>
+  <div id="" class="buttons buttonCancel">Cancel</div>
+</div>
+`
+// create Input sections & see
+inputDivContainer.innerHTML=deleteGroupTextTempl 
+inputSectionContainer.classList.add('active')
+
+// page tages
+const deleteGRFirst=document.getElementById('deleteGRFirst')
+const deleteGRSec=document.getElementById('deleteGRSec')
+const deleteGRThird=document.getElementById('deleteGRThird')
+const deleteGRFourth=document.getElementById('deleteGRFourth')
+const deleteGRFifht=document.getElementById('deleteGRFifht')
+const deleteGRSecPage=document.getElementById('deleteGRSecPage')
+const deleteGRPPasswordKdbxFile=document.getElementById('deleteGRPPasswordKdbxFile')
+const deleteGRFirstSend=document.getElementById('deleteGRFirstSend')
+const deleteGRPasswordH2=document.getElementById('deleteGRPasswordH2')
+const buttonWrongOk=document.getElementById('buttonWrongOk')
+// 1st page see
+
+deleteGRFirst.classList.add('active')
+
+// cancel buttons activated
+inputSectCancelButtonClick() 
+
+// 2nd page open
+deleteGRSecPage.addEventListener('click',()=>{
+  deleteGRFirst.classList.remove('active')
+  deleteGRSec.classList.add('active')
+})
+  // Password input add event
+  let passwordKdbxFileDeleteGroup
+  deleteGRPPasswordKdbxFile.addEventListener("keyup",()=>{
+    passwordKdbxFileDeleteGroup=deleteGRPPasswordKdbxFile.value
+  })
+  // Send button add click
+  deleteGRFirstSend.addEventListener('click',()=> {
+    if (deleteGRPPasswordKdbxFile.value!="") {
+      let dataTemp=[]
+      // second page close, third page open
+      deleteGRSec.classList.remove('active')
+      deleteGRThird.classList.add('active') 
+      // sessionStorege kdbx key delete
+      sessionStorage.removeItem("kdbx")
+      // send data
+      let jwtToken=dataK3p[0].user.jwtToken 
+      // innen folytasd!
+      const urlDeleteGr='http://127.0.0.1:9933/api/kdbx/1/groups'
+      let bodydata={       
+        "kdbxFileDto":
+        {
+            "kdbxFilePwDto": passwordKdbxFileDeleteGroup
+        },
+        
+        "groupDto":
+        {
+            "targetGroupDirectionDto": targetIdTemp
+        }
+    }
+    let options={
+      method: 'POST',
+      headers: {
+       'Content-Type': 'application/json',
+       'Accept' : 'application/json',
+       'Authorization': `Bearer ${jwtToken}`,
+     },
+      body: JSON.stringify(bodydata),
+      };
+      debugger
+   try {
+ 
+    // fetch jelenleg nem működik
+    // fetch(urlDeleteGr,options)
+    //  .then(response =>response.json())
+    //  .then(data => {
+    //    dataTemp.push([data])
+    //    sessionStorage.setItem('kdbx', JSON.stringify(dataTemp))
+    //    kdbxFileBoxClick(kdbxFileIndex)
+    //    deleteGRThird.classList.remove('active')
+    //    deleteGRFourth.classList.add('active')
+    //    }
+    //  )
+
+   } catch (error){
+    // if wrong
+    deleteGRThird.classList.remove('active')
+    deleteGRFifht.classList.add('active')
+    buttonWrongOk.addEventListener('click', ()=>{
+      deleteGroup()
+    })
+
+   }  
+
+    }
+    // if password input is empty
+    if (deleteGRPPasswordKdbxFile.value=="") {
+      deleteGRPasswordH2.classList.add('warningTextColor')
+      setTimeout(() => {
+        deleteGRPasswordH2.classList.remove('warningTextColor')
+     }, 3000);
+    }
+    
+  })
+}
+
+function openNewTab() {
+/*
+- ha van, akkor
+  - létrehozni az inputSectDiv Templatet
+    - üdvözlő szöveg
+    - szeretnéd betölteni?
+      - ok, cancel button
+        - ha cancel akkor: 
+          inputSectDiv remove active és az innerHTML=""
+        - ha ok, akkor meghívni a betöltés folyamatát a sectionStorage alapján. 
+   
+*/  
+let newTabTextTemplate =`
+  <h1 class="textAlItCent">Hi ${dataK3p[0].user.firstName} ${dataK3p[0].user.lastName} !</h1>
+  <h4>Load the kdbx file?</h4>
+  <div id="newTabOk" class="buttons ">Ok</div>
+  <div id="" class="buttons buttonCancel">Cancel</div>
+
+`
+inputDivContainer.innerHTML=newTabTextTemplate
+const newTabOk=document.getElementById('newTabOk')
+const buttonCancel=document.querySelectorAll('.buttonCancel')
+inputSectionContainer.classList.add('active')
+
+// Cancel button click
+
+buttonCancel[0].addEventListener("click", ()=>{
+  inputSectionContainer.classList.remove('active')
+  inputDivContainer.innerHTML=""
+  dataK3p=[]
+  sessionStorage.clear()
+})
+
+// Ok button click 
+
+newTabOk.addEventListener("click", ()=>{
+  inputSectionContainer.classList.remove('active')
+  inputDivContainer.innerHTML=""
+  firstPageSect.classList.toggle('hide')
+  dashboard.classList.toggle('hide')
+  createDashboard()
+  let tempJson=JSON.parse(sessionStorage.kdbx)
+  let temp02=tempJson[0][0]
+  kdbxObject={"kdbx":{0:[temp02]},}
+   changeBoxName(kdbxObject['kdbx'])
+   kdbxFileBoxClick(0)
+
+})
+
+}
+
+// ENTRIES FUNTIONS  
+
